@@ -1,1 +1,1 @@
-A WIP project, build upon the MERN stack.
+A WIP project, built upon the MERN stack.
