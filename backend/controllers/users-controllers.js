@@ -5,6 +5,9 @@ const fs = require("fs");
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const Place = require("../models/place");
+//const client = require("../util/email");
+const nodemailer = require("nodemailer");
+const sgTransport = require("nodemailer-sendgrid-transport");
 
 const mongoose = require("mongoose");
 
@@ -93,6 +96,9 @@ const signup = async (req, res, next) => {
     image: req.file.path,
     password: hashedPassword,
     places: [],
+    temporarytoken: jwt.sign({ name, email }, process.env.JWT_KEY, {
+      expiresIn: "12h",
+    }),
   });
 
   try {
@@ -247,8 +253,66 @@ const deleteUser = async (req, res, next) => {
   res.status(200).json({ message: "Deleted user." });
 };
 
+const verifyUser = async (req, res, next) => {
+  const options = {
+    auth: {
+      api_user: process.env.SENDGRID_USERNAME,
+      api_key: process.env.SENDGRID_PASSWORD,
+    },
+  };
+  const client = nodemailer.createTransport(sgTransport(options));
+
+  User.findOne({ temporarytoken: req.params.token }, (err, user) => {
+    if (err) throw err; // Throw error if cannot login
+    const token = req.params.token; // Save the token from URL for verification
+    console.log("the token is", token);
+    // Function to verify the user's token
+    jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+      if (err) {
+        res.json({ success: false, message: "Activation link has expired." }); // Token is expired
+      } else if (!user) {
+        res.json({ success: false, message: "Activation link has expired." }); // Token may be valid but does not match any user in the database
+      } else {
+        //user.temporarytoken = false; // Remove temporary token
+        //user.isConfirmed = true; // Change account status to Activated
+        // Mongoose Method to save user into the database
+        user.save((err) => {
+          if (err) {
+            console.log(err); // If unable to save user, log error info to console/terminal
+          } else {
+            console.log("sending message");
+            // If save succeeds, create e-mail object
+            const emailActivate = {
+              from: process.env.SENDGRID_SENDER,
+              to: user.email,
+              subject: "Localhost Account Activated",
+              text: `Hello ${user.name}, Your account has been successfully activated!`,
+              html: `Hello<strong> ${user.name}</strong>,<br><br>Your account has been successfully activated!`,
+            };
+            // Send e-mail object to user
+            client.sendMail(emailActivate, function (err, info) {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log(
+                  "Activiation Message Confirmation -  : " + info.response
+                );
+              }
+            });
+            res.json({
+              succeed: true,
+              message: "User has been successfully activated",
+            });
+          }
+        });
+      }
+    });
+  });
+};
+
 exports.getUsers = getUsers;
 exports.getUserById = getUserById;
 exports.signup = signup;
 exports.login = login;
 exports.deleteUser = deleteUser;
+exports.verifyUser = verifyUser;

@@ -10,6 +10,8 @@ const userSchema = new Schema({
   image: { type: String, required: true },
   places: [{ type: mongoose.Types.ObjectId, required: true, ref: "Place" }],
   isAdmin: { type: Boolean, default: false },
+  temporarytoken: { type: String, required: true },
+  isConfirmed: { type: Boolean, required: true, default: false },
 });
 
 userSchema.plugin(uniqueValidator);

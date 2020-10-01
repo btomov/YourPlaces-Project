@@ -22,9 +22,11 @@ router.post(
   usersController.signup
 );
 
+router.put("/verify/:token", usersController.verifyUser);
+
 router.post("/login", usersController.login);
 
-router.use(checkAuth);
+//router.use(checkAuth);
 
 router.delete("/:uid", usersController.deleteUser);
 
