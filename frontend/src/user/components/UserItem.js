@@ -43,6 +43,7 @@ const UserItem = (props) => {
   };
 
   const auth = useContext(AuthContext);
+  console.log(auth.userId, auth.isAdmin);
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />

@@ -22,7 +22,7 @@ router.post(
   usersController.signup
 );
 
-router.put("/verify/:token", usersController.verifyUser);
+router.post("/verify/:token", usersController.verifyUser);
 
 router.post("/login", usersController.login);
 

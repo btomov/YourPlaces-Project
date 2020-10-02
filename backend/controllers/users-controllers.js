@@ -90,15 +90,26 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
+  let temporarytoken;
+  try {
+    temporarytoken = jwt.sign({ name, email }, process.env.JWT_KEY, {
+      expiresIn: "12h",
+    });
+  } catch (err) {
+    const error = new HttpError(
+      "Signing up failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
   const createdUser = new User({
     name,
     email,
     image: req.file.path,
     password: hashedPassword,
     places: [],
-    temporarytoken: jwt.sign({ name, email }, process.env.JWT_KEY, {
-      expiresIn: "12h",
-    }),
+    temporarytoken,
   });
 
   try {
@@ -126,6 +137,39 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
+  //Send verification email
+  const options = {
+    auth: {
+      api_user: process.env.SENDGRID_USERNAME,
+      api_key: process.env.SENDGRID_PASSWORD,
+    },
+  };
+  const client = nodemailer.createTransport(sgTransport(options));
+
+  const emailActivate = {
+    from: process.env.SENDGRID_SENDER,
+    to: email,
+    subject: "Localhost Account Verification",
+    //text: `Copy and paste this link: ${process.env.REACT_APP_BACKEND_URL}/verify/${temporarytoken}`,
+    text: `Copy and paste this link: http://localhost:3000/verify/${temporarytoken}`,
+    html: `
+    <a href='http://localhost:3000/verify/${temporarytoken}'>
+      Click to confirm your email.
+    </a>`,
+  };
+
+  try {
+    client.sendMail(emailActivate, function (err, info) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Activiation Message Confirmation -  : " + info.response);
+      }
+    });
+  } catch (error) {
+    return next(error);
+  }
+
   res
     .status(201)
     .json({ userId: createdUser.id, email: createdUser.email, token: token });
@@ -143,6 +187,11 @@ const login = async (req, res, next) => {
       "Logging in failed, please try again later.",
       500
     );
+    return next(error);
+  }
+
+  if (!existingUser.isConfirmed) {
+    const error = new HttpError("You need to confirm your email first", 403);
     return next(error);
   }
 
@@ -233,8 +282,8 @@ const deleteUser = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    //await user.remove({ session: sess });
-    //await Place.deleteMany({ creator: user._id });
+    await user.remove({ session: sess });
+    await Place.deleteMany({ creator: user._id });
     //await user.places.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
@@ -246,22 +295,14 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 
-  // fs.unlink(imagePath, (err) => {
-  //   console.log(err);
-  // });
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted user." });
 };
 
 const verifyUser = async (req, res, next) => {
-  const options = {
-    auth: {
-      api_user: process.env.SENDGRID_USERNAME,
-      api_key: process.env.SENDGRID_PASSWORD,
-    },
-  };
-  const client = nodemailer.createTransport(sgTransport(options));
-
   User.findOne({ temporarytoken: req.params.token }, (err, user) => {
     if (err) throw err; // Throw error if cannot login
     const token = req.params.token; // Save the token from URL for verification
@@ -273,32 +314,13 @@ const verifyUser = async (req, res, next) => {
       } else if (!user) {
         res.json({ success: false, message: "Activation link has expired." }); // Token may be valid but does not match any user in the database
       } else {
-        //user.temporarytoken = false; // Remove temporary token
-        //user.isConfirmed = true; // Change account status to Activated
+        user.temporarytoken = false; // Remove temporary token
+        user.isConfirmed = true; // Change account status to Activated
         // Mongoose Method to save user into the database
         user.save((err) => {
           if (err) {
             console.log(err); // If unable to save user, log error info to console/terminal
           } else {
-            console.log("sending message");
-            // If save succeeds, create e-mail object
-            const emailActivate = {
-              from: process.env.SENDGRID_SENDER,
-              to: user.email,
-              subject: "Localhost Account Activated",
-              text: `Hello ${user.name}, Your account has been successfully activated!`,
-              html: `Hello<strong> ${user.name}</strong>,<br><br>Your account has been successfully activated!`,
-            };
-            // Send e-mail object to user
-            client.sendMail(emailActivate, function (err, info) {
-              if (err) {
-                console.log(err);
-              } else {
-                console.log(
-                  "Activiation Message Confirmation -  : " + info.response
-                );
-              }
-            });
             res.json({
               succeed: true,
               message: "User has been successfully activated",

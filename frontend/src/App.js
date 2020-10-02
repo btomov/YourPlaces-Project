@@ -21,6 +21,7 @@ const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
 const UserPlaces = React.lazy(() => import("./places/pages/UserPlaces"));
 const UpdatePlace = React.lazy(() => import("./places/pages/UpdatePlace"));
 const Auth = React.lazy(() => import("./user/pages/Auth"));
+const ConfirmEmail = React.lazy(() => import("./user/pages/ConfirmEmail"));
 
 const App = () => {
   const { token, login, logout, userId, isAdmin } = useAuth();
@@ -41,6 +42,9 @@ const App = () => {
         <Route path="/places/:placeId">
           <UpdatePlace />
         </Route>
+        <Route path="/verify/:tempToken">
+          <ConfirmEmail />
+        </Route>
         <Redirect to="/" />
       </Switch>
     );
@@ -55,6 +59,9 @@ const App = () => {
         </Route>
         <Route path="/auth">
           <Auth />
+        </Route>
+        <Route path="/verify/:tempToken">
+          <ConfirmEmail />
         </Route>
         <Redirect to="/auth" />
       </Switch>
