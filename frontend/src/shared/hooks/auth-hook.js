@@ -14,7 +14,6 @@ export const useAuth = () => {
     setToken(token);
     setUserId(uid);
     setIsAdmin(isAdmin);
-
     const tokenExpirationDate =
       expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
     setTokenExpirationDate(tokenExpirationDate);

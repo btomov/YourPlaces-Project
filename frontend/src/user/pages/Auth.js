@@ -104,6 +104,7 @@ const Auth = () => {
         );
         setShowVerifyWindow(true);
 
+        //Need to make notification stay while we reload the page. Maybe instead of redirecting to /verify on email click, we do "/" and show a notification?
         toast.info(
           "We have sent you an email! Please verify your account before logging in"
         );
