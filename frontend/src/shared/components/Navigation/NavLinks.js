@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 import { AuthContext } from "../../context/auth-context";
 import "./NavLinks.css";
-import Avatar from "../UIElements/Avatar";
+import AvatarButton from "../../../user/components/AvatarButton";
 
 const NavLinks = (props) => {
   const { sendRequest } = useHttpClient();
@@ -55,13 +55,17 @@ const NavLinks = (props) => {
       )}
       {auth.isLoggedIn && userData && (
         <div className="isLoggedIn">
-          <Avatar
+          <AvatarButton
+            avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
+            name={userData.user.name}
+          />
+          {/* <Avatar
             className="avatar"
             image={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
             alt="Avatar"
             width={"3rem"}
             height={"3rem"}
-          />
+          /> */}
           {/* <p id="username-text">{userData.user.name}</p> */}
         </div>
       )}
