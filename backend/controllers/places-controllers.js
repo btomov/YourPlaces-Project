@@ -103,8 +103,6 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(user);
-
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -168,7 +166,7 @@ const updatePlace = async (req, res, next) => {
 
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
-
+  console.log(req);
   let place;
   try {
     place = await Place.findById(placeId).populate("creator");
@@ -184,7 +182,6 @@ const deletePlace = async (req, res, next) => {
     const error = new HttpError("Could not find place for this id.", 404);
     return next(error);
   }
-  console.log(req);
 
   if (place.creator.id !== req.userData.userId) {
     const error = new HttpError(
@@ -198,12 +195,11 @@ const deletePlace = async (req, res, next) => {
 
   try {
     const sess = await mongoose.startSession();
-    console.log(place);
 
     sess.startTransaction();
-    //await place.remove({ session: sess });
+    await place.remove({ session: sess });
     place.creator.places.pull(place);
-    //await place.creator.save({ session: sess });
+    await place.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(

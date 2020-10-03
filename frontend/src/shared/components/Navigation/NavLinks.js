@@ -59,10 +59,10 @@ const NavLinks = (props) => {
             className="avatar"
             image={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
             alt="Avatar"
-            width={"3.5rem"}
-            height={"3.5rem"}
+            width={"3rem"}
+            height={"3rem"}
           />
-          <p id="username-text">{userData.user.name}</p>
+          {/* <p id="username-text">{userData.user.name}</p> */}
         </div>
       )}
       {auth.isLoggedIn && (

@@ -5,7 +5,6 @@ const fs = require("fs");
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const Place = require("../models/place");
-//const client = require("../util/email");
 const nodemailer = require("nodemailer");
 const sgTransport = require("nodemailer-sendgrid-transport");
 
@@ -125,7 +124,10 @@ const signup = async (req, res, next) => {
   let token;
   try {
     token = jwt.sign(
-      { userId: createdUser.id, email: createdUser.email },
+      {
+        userId: createdUser.id,
+        email: createdUser.email,
+      },
       process.env.JWT_KEY,
       { expiresIn: "1h" }
     );
@@ -159,13 +161,7 @@ const signup = async (req, res, next) => {
   };
 
   try {
-    client.sendMail(emailActivate, function (err, info) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Activiation Message Confirmation -  : " + info.response);
-      }
-    });
+    client.sendMail(emailActivate);
   } catch (error) {
     return next(error);
   }
@@ -190,16 +186,16 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  if (!existingUser.isConfirmed) {
-    const error = new HttpError("You need to confirm your email first", 403);
-    return next(error);
-  }
-
   if (!existingUser) {
     const error = new HttpError(
       "Invalid credentials, could not log you in.",
       403
     );
+    return next(error);
+  }
+
+  if (!existingUser.isConfirmed) {
+    const error = new HttpError("You need to confirm your email first", 403);
     return next(error);
   }
 
@@ -225,7 +221,11 @@ const login = async (req, res, next) => {
   let token;
   try {
     token = jwt.sign(
-      { userId: existingUser.id, email: existingUser.email },
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+        isAdmin: existingUser.isAdmin,
+      },
       process.env.JWT_KEY,
       { expiresIn: "1h" }
     );
@@ -246,10 +246,11 @@ const login = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   const userId = req.params.uid;
+  const deleterId = req.userData.userId;
 
   let user;
   try {
-    user = await User.findById(userId).populate("places");
+    user = await User.findById(userId);
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not delete user.",
@@ -258,19 +259,29 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 
+  let deletingUser;
+  try {
+    deletingUser = await User.findById(deleterId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find deleter.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!deletingUser || !deletingUser.isAdmin) {
+    const error = new HttpError(
+      "You need to be an admin to delete another user!",
+      401
+    );
+    return next(error);
+  }
+
   if (!user) {
     const error = new HttpError("Could not find user for this id.", 404);
     return next(error);
   }
-  //console.log(req);
-
-  // if (place.creator.id !== req.userData.userId) {
-  //   const error = new HttpError(
-  //     "You are not allowed to delete this place.",
-  //     401
-  //   );
-  //   return next(error);
-  // }
 
   if (user.isAdmin) {
     const error = new HttpError("Cannot delete admin users!", 401);
@@ -284,7 +295,6 @@ const deleteUser = async (req, res, next) => {
     sess.startTransaction();
     await user.remove({ session: sess });
     await Place.deleteMany({ creator: user._id });
-    //await user.places.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
     console.log(err);
@@ -306,7 +316,6 @@ const verifyUser = async (req, res, next) => {
   User.findOne({ temporarytoken: req.params.token }, (err, user) => {
     if (err) throw err; // Throw error if cannot login
     const token = req.params.token; // Save the token from URL for verification
-    console.log("the token is", token);
     // Function to verify the user's token
     jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
       if (err) {
