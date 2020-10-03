@@ -224,7 +224,6 @@ const login = async (req, res, next) => {
       {
         userId: existingUser.id,
         email: existingUser.email,
-        isAdmin: existingUser.isAdmin,
       },
       process.env.JWT_KEY,
       { expiresIn: "1h" }
@@ -240,7 +239,6 @@ const login = async (req, res, next) => {
     userId: existingUser.id,
     email: existingUser.email,
     token: token,
-    isAdmin: existingUser.isAdmin,
   });
 };
 
