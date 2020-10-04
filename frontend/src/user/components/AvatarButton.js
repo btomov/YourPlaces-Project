@@ -22,7 +22,7 @@ const AvatarButton = (props) => {
   return (
     <Dropdown trigger={trigger} pointing="top right" icon={null}>
       <Dropdown.Menu>
-        <Dropdown.Item text="Account" icon="user" as={Link} to="/accounts" />
+        <Dropdown.Item text="Account" icon="user" as={Link} to="/account" />
         <Dropdown.Item
           text="Settings"
           icon="settings"

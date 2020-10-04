@@ -12,11 +12,10 @@ const ConfirmEmail = () => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const responseData = await sendRequest(
+        await sendRequest(
           process.env.REACT_APP_BACKEND_URL + "/users/verify/" + tempToken,
           "POST"
         );
-        console.log(responseData);
       } catch (err) {}
     };
     verifyUser();

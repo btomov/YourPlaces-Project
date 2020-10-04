@@ -166,7 +166,6 @@ const updatePlace = async (req, res, next) => {
 
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
-  console.log(req);
   let place;
   try {
     place = await Place.findById(placeId).populate("creator");

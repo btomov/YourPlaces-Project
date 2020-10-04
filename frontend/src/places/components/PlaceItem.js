@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import UpdatePlace from "../pages/UpdatePlace";
 
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
@@ -12,14 +13,19 @@ import "./PlaceItem.css";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const auth = useContext(AuthContext);
+  const [loadedPlace, setLoadedPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
+  const auth = useContext(AuthContext);
   const openMapHandler = () => setShowMap(true);
-
   const closeMapHandler = () => setShowMap(false);
 
+  const startEditHandler = () => setIsEditing(true);
+  const stopEditHandler = () => {
+    setIsEditing(false);
+  };
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -42,6 +48,19 @@ const PlaceItem = (props) => {
       props.onDelete(props.id);
     } catch (err) {}
   };
+
+  //Need to re-grab the place data after we update it, so we'll be getting everything from the DB instead of through props. Means i won't need most of the props, can delete from placelist
+  useEffect(() => {
+    const fetchPlace = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${process.env.REACT_APP_BACKEND_URL}/places/${props.id}`
+        );
+        setLoadedPlace(responseData.place);
+      } catch (err) {}
+    };
+    fetchPlace();
+  }, [sendRequest, props.id]);
 
   return (
     <React.Fragment>
@@ -86,25 +105,38 @@ const PlaceItem = (props) => {
               alt={props.title}
             />
           </div>
-          <div className="place-item__info">
-            <h2>{props.title}</h2>
-            <h3>{props.address}</h3>
-            <p>{props.description}</p>
-          </div>
-          <div className="place-item__actions">
-            <Button inverse onClick={openMapHandler}>
-              VIEW ON MAP
-            </Button>
-            {auth.userId === props.creatorId && (
-              <Button to={`/places/${props.id}`}>EDIT</Button>
-            )}
+          {/* Load normal place if we're not editing */}
+          {!isEditing && !isLoading && loadedPlace && (
+            <div>
+              <div className="place-item__info">
+                <h2>{loadedPlace.title}</h2>
+                <h3>{loadedPlace.address}</h3>
+                <p>{loadedPlace.description}</p>
+              </div>
+              <div className="place-item__actions">
+                <Button inverse onClick={openMapHandler}>
+                  VIEW ON MAP
+                </Button>
+                {(auth.userId === props.creatorId || auth.isAdmin) && (
+                  <Button onClick={startEditHandler}>EDIT</Button>
+                )}
 
-            {auth.userId === props.creatorId && (
-              <Button danger onClick={showDeleteWarningHandler}>
-                DELETE
-              </Button>
-            )}
-          </div>
+                {(auth.userId === props.creatorId || auth.isAdmin) && (
+                  <Button danger onClick={showDeleteWarningHandler}>
+                    DELETE
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+          {/* Else, load the same form but with fields that we can edit instead. */}
+          {isEditing && !isLoading && loadedPlace && (
+            <UpdatePlace
+              place={loadedPlace}
+              placeId={props.id}
+              setEditOff={stopEditHandler}
+            />
+          )}
         </Card>
       </li>
     </React.Fragment>

@@ -34,6 +34,7 @@ const PlaceList = (props) => {
 
   return (
     <ul className="place-list">
+      {/* TODO: Delete props i no longer need */}
       {props.items.map((place) => (
         <PlaceItem
           key={place.id}
@@ -45,6 +46,7 @@ const PlaceList = (props) => {
           creatorId={place.creator}
           coordinates={place.location}
           onDelete={props.onDeletePlace}
+          place={place}
         />
       ))}
     </ul>

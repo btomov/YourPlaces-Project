@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -15,13 +15,10 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceForm.css";
 
-const UpdatePlace = () => {
+const UpdatePlace = (props) => {
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
-  const placeId = useParams().placeId;
-  const history = useHistory();
-
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
@@ -39,18 +36,15 @@ const UpdatePlace = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`
-        );
-        setLoadedPlace(responseData.place);
+        setLoadedPlace(props.place);
         setFormData(
           {
             title: {
-              value: responseData.place.title,
+              value: props.place.title,
               isValid: true,
             },
             description: {
-              value: responseData.place.description,
+              value: props.place.description,
               isValid: true,
             },
           },
@@ -59,13 +53,13 @@ const UpdatePlace = () => {
       } catch (err) {}
     };
     fetchPlace();
-  }, [sendRequest, placeId, setFormData]);
+  }, [sendRequest, setFormData, props.place]);
 
   const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
     try {
       await sendRequest(
-        `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${props.placeId}`,
         "PATCH",
         JSON.stringify({
           title: formState.inputs.title.value,
@@ -76,7 +70,8 @@ const UpdatePlace = () => {
           Authorization: "Bearer " + auth.token,
         }
       );
-      history.push("/" + auth.userId + "/places");
+      props.setEditOff();
+      //history.push("/" + auth.userId + "/places");
     } catch (err) {}
   };
 
@@ -123,6 +118,7 @@ const UpdatePlace = () => {
             onInput={inputHandler}
             initialValue={loadedPlace.description}
             initialValid={true}
+            rows="10"
           />
           <Button type="submit" disabled={!formState.isValid}>
             UPDATE PLACE
