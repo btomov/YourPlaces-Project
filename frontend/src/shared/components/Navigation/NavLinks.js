@@ -26,11 +26,6 @@ const NavLinks = (props) => {
     }
   }, [sendRequest, auth.isLoggedIn, auth.userId]);
 
-  const logoutAndRedirect = () => {
-    auth.logout();
-    history.push("/");
-  };
-
   return (
     <ul className="nav-links">
       <li>
@@ -59,20 +54,7 @@ const NavLinks = (props) => {
             avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
             name={userData.user.name}
           />
-          {/* <Avatar
-            className="avatar"
-            image={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
-            alt="Avatar"
-            width={"3rem"}
-            height={"3rem"}
-          /> */}
-          {/* <p id="username-text">{userData.user.name}</p> */}
         </div>
-      )}
-      {auth.isLoggedIn && (
-        <li>
-          <button onClick={logoutAndRedirect}>LOGOUT</button>
-        </li>
       )}
     </ul>
   );

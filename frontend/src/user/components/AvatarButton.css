@@ -1,6 +1,9 @@
-Dropdown {
+.avatar {
     display: block;
     border-radius: 50%;
+    width: 100%;
     height: 100%;
     object-fit: cover;
+    width: 15em;
+    height: 3em;
 }
