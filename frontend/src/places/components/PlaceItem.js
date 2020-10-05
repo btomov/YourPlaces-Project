@@ -26,6 +26,7 @@ const PlaceItem = (props) => {
   const startEditHandler = () => setIsEditing(true);
   const stopEditHandler = () => {
     setIsEditing(false);
+    //Force the page to re-update data on said place
     setReloadPlace(!reloadPlace);
   };
   const showDeleteWarningHandler = () => {

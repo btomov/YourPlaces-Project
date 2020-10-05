@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get("/:pid", placesControllers.getPlaceById);
 
-router.get("/user/:uid", placesControllers.getPlacesByUserId);
+router.get("/user/:username", placesControllers.getPlacesByUserId);
 
 router.use(checkAuth);
 
