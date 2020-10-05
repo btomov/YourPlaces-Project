@@ -93,6 +93,7 @@ const NewPlace = () => {
           onInput={inputHandler}
         />
         <ImageUpload
+          showPreview={true}
           id="image"
           onInput={inputHandler}
           errorText="Please provide an image."

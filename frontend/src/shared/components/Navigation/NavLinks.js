@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 import { AuthContext } from "../../context/auth-context";
 import "./NavLinks.css";
@@ -10,7 +10,7 @@ const NavLinks = (props) => {
   const { sendRequest } = useHttpClient();
   const [userData, setUserData] = useState();
   const auth = useContext(AuthContext);
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
     if (auth.isLoggedIn && auth.userId) {
@@ -20,6 +20,7 @@ const NavLinks = (props) => {
             `${process.env.REACT_APP_BACKEND_URL}/users/${auth.userId}`
           );
           setUserData(responseData);
+          console.log(responseData);
         } catch (err) {}
       };
       fetchUser();
@@ -52,7 +53,7 @@ const NavLinks = (props) => {
         <div className="isLoggedIn">
           <AvatarButton
             avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
-            name={userData.user.name}
+            username={userData.user.username}
           />
         </div>
       )}

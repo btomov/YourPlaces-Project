@@ -44,7 +44,7 @@ const Auth = () => {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined,
+          username: undefined,
           image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
@@ -53,7 +53,7 @@ const Auth = () => {
       setFormData(
         {
           ...formState.inputs,
-          name: {
+          username: {
             value: "",
             isValid: false,
           },
@@ -94,7 +94,7 @@ const Auth = () => {
       try {
         const formData = new FormData();
         formData.append("email", formState.inputs.email.value);
-        formData.append("name", formState.inputs.name.value);
+        formData.append("username", formState.inputs.username.value);
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
         await sendRequest(
@@ -140,16 +140,17 @@ const Auth = () => {
           {!isLoginMode && (
             <Input
               element="input"
-              id="name"
+              id="username"
               type="text"
-              label="Your Name"
+              label="Your Username"
               validators={[VALIDATOR_REQUIRE()]}
-              errorText="Please enter a name."
+              errorText="Please enter a username."
               onInput={inputHandler}
             />
           )}
           {!isLoginMode && (
             <ImageUpload
+              showPreview={true}
               center
               id="image"
               onInput={inputHandler}
