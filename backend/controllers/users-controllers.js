@@ -25,12 +25,11 @@ const getUsers = async (req, res, next) => {
 };
 
 const getUserById = async (req, res, next) => {
-  //const userId = req.params.uid;
-  const username = req.params.username;
+  const userId = req.params.uid;
 
   let user;
   try {
-    user = await User.findOne({ username: username });
+    user = await User.findById(userId);
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find a user.",
@@ -38,7 +37,7 @@ const getUserById = async (req, res, next) => {
     );
     return next(error);
   }
-  console.log(user);
+
   if (!user) {
     const error = new HttpError(
       "Could not find user for the provided id.",
@@ -54,15 +53,11 @@ const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError(
-        "Invalid inputs passed, please check your data",
-        422,
-        errors
-      )
+      new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
 
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -96,7 +91,7 @@ const signup = async (req, res, next) => {
 
   let temporarytoken;
   try {
-    temporarytoken = jwt.sign({ username, email }, process.env.JWT_KEY, {
+    temporarytoken = jwt.sign({ name, email }, process.env.JWT_KEY, {
       expiresIn: "12h",
     });
   } catch (err) {
@@ -108,7 +103,7 @@ const signup = async (req, res, next) => {
   }
 
   const createdUser = new User({
-    username,
+    name,
     email,
     image: req.file.path,
     password: hashedPassword,
@@ -121,8 +116,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
-      500,
-      err
+      500
     );
     return next(error);
   }

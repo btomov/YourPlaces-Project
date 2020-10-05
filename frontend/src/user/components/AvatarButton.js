@@ -15,7 +15,7 @@ const AvatarButton = (props) => {
 
   const trigger = (
     <span className="avatar">
-      <Image avatar src={props.avatar} /> {props.username}
+      <Image avatar src={props.avatar} /> {props.name}
     </span>
   );
 

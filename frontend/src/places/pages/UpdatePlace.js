@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-// import { useHistory } from "react-router-dom";
-import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+import { useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -30,14 +29,6 @@ const UpdatePlace = (props) => {
         value: "",
         isValid: false,
       },
-      address: {
-        value: "",
-        isValid: false,
-      },
-      image: {
-        value: null,
-        isValid: false,
-      },
     },
     false
   );
@@ -48,20 +39,12 @@ const UpdatePlace = (props) => {
         setLoadedPlace(props.place);
         setFormData(
           {
-            image: {
-              value: props.place.image,
-              isValid: true,
-            },
             title: {
               value: props.place.title,
               isValid: true,
             },
             description: {
               value: props.place.description,
-              isValid: true,
-            },
-            address: {
-              value: props.place.address,
               isValid: true,
             },
           },
@@ -81,8 +64,6 @@ const UpdatePlace = (props) => {
         JSON.stringify({
           title: formState.inputs.title.value,
           description: formState.inputs.description.value,
-          image: formState.inputs.image.value,
-          address: formState.inputs.address.value,
         }),
         {
           "Content-Type": "application/json",
@@ -117,7 +98,6 @@ const UpdatePlace = (props) => {
       <ErrorModal error={error} onClear={clearError} />
       {!isLoading && loadedPlace && (
         <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
-          <ImageUpload id="image" onInput={inputHandler} initialValid={true} />
           <Input
             id="title"
             element="input"
@@ -139,16 +119,6 @@ const UpdatePlace = (props) => {
             initialValue={loadedPlace.description}
             initialValid={true}
             rows="10"
-          />
-          <Input
-            id="address"
-            element="input"
-            label="Address"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid address."
-            onInput={inputHandler}
-            initialValue={loadedPlace.address}
-            initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
             UPDATE PLACE
