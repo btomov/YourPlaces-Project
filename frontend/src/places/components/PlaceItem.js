@@ -14,6 +14,7 @@ import "./PlaceItem.css";
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
+  const [reloadPlace, setReloadPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +26,7 @@ const PlaceItem = (props) => {
   const startEditHandler = () => setIsEditing(true);
   const stopEditHandler = () => {
     setIsEditing(false);
+    setReloadPlace(!reloadPlace);
   };
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -60,7 +62,7 @@ const PlaceItem = (props) => {
       } catch (err) {}
     };
     fetchPlace();
-  }, [sendRequest, props.id]);
+  }, [sendRequest, props.id, reloadPlace]);
 
   return (
     <React.Fragment>
