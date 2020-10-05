@@ -24,7 +24,7 @@ const UsersList = (props) => {
             key={user.id}
             id={user.id}
             image={user.image}
-            name={user.name}
+            username={user.username}
             placeCount={user.places.length}
             onDelete={props.onDeleteUser}
           />

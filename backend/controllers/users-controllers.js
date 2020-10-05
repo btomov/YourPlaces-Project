@@ -57,7 +57,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   let existingUser;
   try {
@@ -91,7 +91,7 @@ const signup = async (req, res, next) => {
 
   let temporarytoken;
   try {
-    temporarytoken = jwt.sign({ name, email }, process.env.JWT_KEY, {
+    temporarytoken = jwt.sign({ username, email }, process.env.JWT_KEY, {
       expiresIn: "12h",
     });
   } catch (err) {
@@ -103,7 +103,7 @@ const signup = async (req, res, next) => {
   }
 
   const createdUser = new User({
-    name,
+    username,
     email,
     image: req.file.path,
     password: hashedPassword,

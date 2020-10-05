@@ -52,7 +52,7 @@ const NavLinks = (props) => {
         <div className="isLoggedIn">
           <AvatarButton
             avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
-            name={userData.user.name}
+            username={userData.user.username}
           />
         </div>
       )}
