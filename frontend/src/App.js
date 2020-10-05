@@ -24,7 +24,7 @@ const Auth = React.lazy(() => import("./user/pages/Auth"));
 const ConfirmEmail = React.lazy(() => import("./user/pages/ConfirmEmail"));
 
 const App = () => {
-  const { token, login, logout, userId, isAdmin } = useAuth();
+  const { token, login, logout, userId, isAdmin, username } = useAuth();
   let routes;
 
   if (token) {
@@ -33,7 +33,7 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/:userId/places" exact>
+        <Route path="/:username/places" exact>
           <UserPlaces />
         </Route>
         <Route path="/places/new" exact>
@@ -54,7 +54,7 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/:userId/places" exact>
+        <Route path="/:username/places" exact>
           <UserPlaces />
         </Route>
         <Route path="/auth">

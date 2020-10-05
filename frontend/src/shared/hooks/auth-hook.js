@@ -6,12 +6,14 @@ let logoutTimer;
 export const useAuth = () => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState();
+  const [username, setUsername] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   //const { sendRequest } = useHttpClient();
 
-  const login = useCallback((uid, token, isAdmin, expirationDate) => {
+  const login = useCallback((username, uid, token, isAdmin, expirationDate) => {
     setToken(token);
+    setUsername(username);
     setUserId(uid);
     setIsAdmin(isAdmin);
     const tokenExpirationDate =
@@ -20,6 +22,7 @@ export const useAuth = () => {
     localStorage.setItem(
       "userData",
       JSON.stringify({
+        username: username,
         userId: uid,
         token: token,
         expiration: tokenExpirationDate.toISOString(),
@@ -32,6 +35,7 @@ export const useAuth = () => {
     setToken(null);
     setUserId(null);
     setIsAdmin(null);
+    setUsername(null);
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
   }, []);
@@ -54,6 +58,7 @@ export const useAuth = () => {
       new Date(storedData.expiration) > new Date()
     ) {
       login(
+        storedData.username,
         storedData.userId,
         storedData.token,
         storedData.isAdmin,
@@ -62,5 +67,5 @@ export const useAuth = () => {
     }
   }, [login]);
 
-  return { token, login, logout, userId, isAdmin };
+  return { token, login, logout, userId, isAdmin, username };
 };

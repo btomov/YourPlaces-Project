@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import "react-toastify/dist/ReactToastify.min.css";
 
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -24,7 +24,7 @@ const Auth = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [showVerifyWindow, setShowVerifyWindow] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const history = useHistory();
+  //const history = useHistory();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -84,7 +84,9 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
+        console.log("From auth.js " + responseData);
         auth.login(
+          responseData.username,
           responseData.userId,
           responseData.token,
           responseData.isAdmin
@@ -108,10 +110,6 @@ const Auth = () => {
         toast.info(
           "We have sent you an email! Please verify your account before logging in"
         );
-        //history.push("/");
-
-        // Don't log users in instantly, only let them log after verifying their email
-        //auth.login(responseData.userId, responseData.token);
       } catch (err) {}
     }
   };

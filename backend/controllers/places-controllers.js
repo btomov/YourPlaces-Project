@@ -35,7 +35,7 @@ const getPlaceById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   //const userId = req.params.uid;
   const username = req.params.username;
-  console.log(req.params.username);
+  console.log("Username is " + req.params.username);
   // let places;
   let userWithPlaces;
   try {
@@ -50,7 +50,7 @@ const getPlacesByUserId = async (req, res, next) => {
     );
     return next(error);
   }
-  console.log(userWithPlaces);
+  console.log("user with places is " + userWithPlaces);
 
   // if (!places || places.length === 0) {
   if (!userWithPlaces) {

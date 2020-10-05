@@ -27,7 +27,7 @@ const getUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   //const userId = req.params.uid;
   const username = req.params.username;
-
+  console.log(req.params);
   let user;
   try {
     user = await User.findOne({ username: username });
@@ -38,7 +38,7 @@ const getUserById = async (req, res, next) => {
     );
     return next(error);
   }
-  console.log(user);
+  console.log("Userby id is " + user);
   if (!user) {
     const error = new HttpError(
       "Could not find user for the provided id.",
@@ -243,6 +243,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
   res.json({
+    username: existingUser.username,
     userId: existingUser.id,
     email: existingUser.email,
     token: token,

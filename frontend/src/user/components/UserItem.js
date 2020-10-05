@@ -38,6 +38,7 @@ const UserItem = (props) => {
           Authorization: "Bearer " + auth.token,
         }
       );
+      console.log("From UserItem" + props.id);
       props.onDelete(props.id);
     } catch (err) {}
   };
