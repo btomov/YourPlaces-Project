@@ -84,7 +84,9 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
+        console.log(responseData);
         auth.login(
+          responseData.username,
           responseData.userId,
           responseData.token,
           responseData.isAdmin

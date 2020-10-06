@@ -237,6 +237,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
   res.json({
+    username: existingUser.username,
     userId: existingUser.id,
     email: existingUser.email,
     token: token,

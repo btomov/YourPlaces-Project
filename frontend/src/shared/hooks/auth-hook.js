@@ -7,12 +7,15 @@ export const useAuth = () => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState();
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   //const { sendRequest } = useHttpClient();
 
-  const login = useCallback((uid, token, isAdmin, expirationDate) => {
+  const login = useCallback((username, uid, token, isAdmin, expirationDate) => {
+    console.log("From auth-hook " + username);
     setToken(token);
     setUserId(uid);
+    setUsername(username);
     setIsAdmin(isAdmin);
     const tokenExpirationDate =
       expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
@@ -20,10 +23,11 @@ export const useAuth = () => {
     localStorage.setItem(
       "userData",
       JSON.stringify({
+        // username: username,
         userId: uid,
         token: token,
         expiration: tokenExpirationDate.toISOString(),
-        isAdmin: isAdmin,
+        // isAdmin: isAdmin,
       })
     );
   }, []);
@@ -32,6 +36,7 @@ export const useAuth = () => {
     setToken(null);
     setUserId(null);
     setIsAdmin(null);
+    setUsername(null);
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
   }, []);
@@ -53,14 +58,16 @@ export const useAuth = () => {
       storedData.token &&
       new Date(storedData.expiration) > new Date()
     ) {
+      console.log(storedData);
       login(
+        // storedData.username,
         storedData.userId,
         storedData.token,
-        storedData.isAdmin,
+        //storedData.isAdmin,
         new Date(storedData.expiration)
       );
     }
   }, [login]);
 
-  return { token, login, logout, userId, isAdmin };
+  return { username, token, login, logout, userId, isAdmin };
 };

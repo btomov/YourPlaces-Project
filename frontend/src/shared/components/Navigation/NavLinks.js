@@ -19,13 +19,15 @@ const NavLinks = (props) => {
           const responseData = await sendRequest(
             `${process.env.REACT_APP_BACKEND_URL}/users/${auth.userId}`
           );
-          setUserData(responseData);
+          setUserData(responseData.user);
         } catch (err) {}
       };
       fetchUser();
     }
-  }, [sendRequest, auth.isLoggedIn, auth.userId]);
-
+  }, [sendRequest, auth.isLoggedIn, auth.userId, auth]);
+  const logoutAndRedirect = () => {
+    auth.logout();
+  };
   return (
     <ul className="nav-links">
       <li>
@@ -35,7 +37,7 @@ const NavLinks = (props) => {
       </li>
       {auth.isLoggedIn && (
         <li>
-          <NavLink to={`/${auth.userId}/places`}>MY PLACES</NavLink>
+          <NavLink to={`/${auth.username}/places`}>MY PLACES</NavLink>
         </li>
       )}
       {auth.isLoggedIn && (
@@ -51,10 +53,15 @@ const NavLinks = (props) => {
       {auth.isLoggedIn && userData && (
         <div className="isLoggedIn">
           <AvatarButton
-            avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.user.image}`}
-            username={userData.user.username}
+            avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.image}`}
+            username={auth.username}
           />
         </div>
+      )}
+      {auth.isLoggedIn && (
+        <li>
+          <button onClick={logoutAndRedirect}>LOGOUT</button>
+        </li>
       )}
     </ul>
   );

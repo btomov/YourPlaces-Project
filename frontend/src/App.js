@@ -24,7 +24,7 @@ const Auth = React.lazy(() => import("./user/pages/Auth"));
 const ConfirmEmail = React.lazy(() => import("./user/pages/ConfirmEmail"));
 
 const App = () => {
-  const { token, login, logout, userId, isAdmin } = useAuth();
+  const { username, token, login, logout, userId, isAdmin } = useAuth();
   let routes;
 
   if (token) {
@@ -72,6 +72,7 @@ const App = () => {
     <AuthContext.Provider
       value={{
         isLoggedIn: !!token,
+        username: username,
         token: token,
         userId: userId,
         isAdmin: isAdmin,
