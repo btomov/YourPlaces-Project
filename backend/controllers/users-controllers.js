@@ -26,7 +26,7 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   const userId = req.params.uid;
-
+  //console.log(userId); //Pops if i go directly to /users/id OR apparently if i go to My Places..but only sometimes?
   let user;
   try {
     user = await User.findById(userId);

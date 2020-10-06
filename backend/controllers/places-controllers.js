@@ -33,12 +33,13 @@ const getPlaceById = async (req, res, next) => {
 };
 
 const getPlacesByUserId = async (req, res, next) => {
-  const userId = req.params.uid;
-
+  const username = new RegExp(`^${req.params.username}$`, "i");
   // let places;
   let userWithPlaces;
   try {
-    userWithPlaces = await User.findById(userId).populate("places");
+    userWithPlaces = await User.findOne({ username: username }).populate(
+      "places"
+    );
   } catch (err) {
     const error = new HttpError(
       "Fetching places failed, please try again later.",
@@ -46,8 +47,6 @@ const getPlacesByUserId = async (req, res, next) => {
     );
     return next(error);
   }
-
-  // if (!places || places.length === 0) {
   if (!userWithPlaces) {
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
