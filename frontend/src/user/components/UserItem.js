@@ -70,7 +70,7 @@ const UserItem = (props) => {
       <li className="user-item">
         <Card className="user-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
-          <Link to={`/${props.id}/places`}>
+          <Link to={`/${props.username}/places`}>
             <div className="user-item__image">
               <Avatar
                 image={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}

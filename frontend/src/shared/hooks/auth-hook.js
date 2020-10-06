@@ -23,11 +23,11 @@ export const useAuth = () => {
     localStorage.setItem(
       "userData",
       JSON.stringify({
-        // username: username,
+        username: username,
         userId: uid,
         token: token,
         expiration: tokenExpirationDate.toISOString(),
-        // isAdmin: isAdmin,
+        isAdmin: isAdmin,
       })
     );
   }, []);
@@ -60,10 +60,10 @@ export const useAuth = () => {
     ) {
       console.log(storedData);
       login(
-        // storedData.username,
+        storedData.username,
         storedData.userId,
         storedData.token,
-        //storedData.isAdmin,
+        storedData.isAdmin,
         new Date(storedData.expiration)
       );
     }

@@ -53,7 +53,11 @@ const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+      new HttpError(
+        "Invalid inputs passed, please check your data.",
+        // errors.errors[0].param + " " + errors.errors[0].msg,
+        422
+      )
     );
   }
 
@@ -65,7 +69,8 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
-      500
+      500,
+      err
     );
     return next(error);
   }
@@ -84,7 +89,8 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Could not create user, please try again.",
-      500
+      500,
+      err
     );
     return next(error);
   }
@@ -97,7 +103,8 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
-      500
+      500,
+      err
     );
     return next(error);
   }
@@ -114,10 +121,13 @@ const signup = async (req, res, next) => {
   try {
     await createdUser.save();
   } catch (err) {
-    const error = new HttpError(
-      "Signing up failed, please try again later.",
-      500
-    );
+    let errorMsg;
+    if (err.errors.username) {
+      errorMsg = "This username is already taken";
+    } else {
+      errorMsg = "Signing up failed, please try again later.";
+    }
+    const error = new HttpError(errorMsg, 500, err);
     return next(error);
   }
 
@@ -134,7 +144,8 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
-      500
+      500,
+      err
     );
     return next(error);
   }
@@ -227,7 +238,7 @@ const login = async (req, res, next) => {
         isAdmin: existingUser.isAdmin,
       },
       process.env.JWT_KEY,
-      { expiresIn: "1h" }
+      { expiresIn: 10 }
     );
   } catch (err) {
     const error = new HttpError(
