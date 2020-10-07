@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 import { AuthContext } from "../../context/auth-context";
 import "./NavLinks.css";
@@ -10,7 +10,7 @@ const NavLinks = (props) => {
   const { sendRequest } = useHttpClient();
   const [userData, setUserData] = useState();
   const auth = useContext(AuthContext);
-  const history = useHistory();
+  //const history = useHistory();
 
   useEffect(() => {
     if (auth.isLoggedIn && auth.userId) {

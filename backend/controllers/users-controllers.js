@@ -353,9 +353,47 @@ const verifyUser = async (req, res, next) => {
   });
 };
 
+const resetPassword = async (req, res, next) => {
+  const email = req.body.email;
+
+  let user;
+  try {
+    user = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not delete user.",
+      500
+    );
+    return next(error);
+  }
+  console.log(user);
+  // if (!user) {
+  //   const error = new HttpError("Could not find user for this id.", 404);
+  //   return next(error);
+  // }
+
+  // try {
+  //   const sess = await mongoose.startSession();
+  //   sess.startTransaction();
+  //   await user.remove({ session: sess });
+  //   await Place.deleteMany({ creator: user._id });
+  //   await sess.commitTransaction();
+  // } catch (err) {
+  //   console.log(err);
+  //   const error = new HttpError(
+  //     "Something went wrong, could not delete user.",
+  //     500
+  //   );
+  //   return next(error);
+  // }
+
+  //res.status(200).json({ message: "Deleted user." });
+};
+
 exports.getUsers = getUsers;
 exports.getUserById = getUserById;
 exports.signup = signup;
 exports.login = login;
 exports.deleteUser = deleteUser;
 exports.verifyUser = verifyUser;
+exports.resetPassword = resetPassword;

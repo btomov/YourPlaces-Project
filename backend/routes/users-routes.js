@@ -22,6 +22,8 @@ router.post(
   usersController.signup
 );
 
+router.post("/reset-password", usersController.resetPassword);
+
 router.post("/verify/:token", usersController.verifyUser);
 
 router.post("/login", usersController.login);

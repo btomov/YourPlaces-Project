@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import "react-toastify/dist/ReactToastify.min.css";
 
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -24,7 +24,7 @@ const Auth = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [showVerifyWindow, setShowVerifyWindow] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const history = useHistory();
+  //const history = useHistory();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -176,7 +176,7 @@ const Auth = () => {
             errorText="Please enter a valid password, at least 6 characters."
             onInput={inputHandler}
           />
-          <a href="/forgot-password">Reset Password</a>
+          <a href="reset-password">Reset Password</a>
           <hr />
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "SIGNUP"}
