@@ -5,6 +5,7 @@ const fs = require("fs");
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const Place = require("../models/place");
+const PwChangeRequest = require("../models/reset-password");
 const nodemailer = require("nodemailer");
 const sgTransport = require("nodemailer-sendgrid-transport");
 
@@ -116,6 +117,7 @@ const signup = async (req, res, next) => {
     password: hashedPassword,
     places: [],
     temporarytoken,
+    resetPasswordRequests: [],
   });
 
   try {
@@ -235,10 +237,10 @@ const login = async (req, res, next) => {
       {
         userId: existingUser.id,
         email: existingUser.email,
-        isAdmin: existingUser.isAdmin,
+        // isAdmin: existingUser.isAdmin,
       },
       process.env.JWT_KEY,
-      { expiresIn: 10 }
+      { expiresIn: "1h" }
     );
   } catch (err) {
     const error = new HttpError(
@@ -366,26 +368,49 @@ const resetPassword = async (req, res, next) => {
     );
     return next(error);
   }
-  console.log(user);
-  // if (!user) {
-  //   const error = new HttpError("Could not find user for this id.", 404);
-  //   return next(error);
-  // }
 
-  // try {
-  //   const sess = await mongoose.startSession();
-  //   sess.startTransaction();
-  //   await user.remove({ session: sess });
-  //   await Place.deleteMany({ creator: user._id });
-  //   await sess.commitTransaction();
-  // } catch (err) {
-  //   console.log(err);
-  //   const error = new HttpError(
-  //     "Something went wrong, could not delete user.",
-  //     500
-  //   );
-  //   return next(error);
-  // }
+  if (!user) {
+    const error = new HttpError("Could not find a user with that email.", 404);
+    return next(error);
+  }
+
+  let token;
+  try {
+    token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+      },
+      process.env.JWT_KEY,
+      { expiresIn: "5m" }
+    );
+  } catch (err) {
+    const error = new HttpError(
+      "Logging in failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
+  const createdResetRequest = new PwChangeRequest({
+    userId: user._id,
+    token,
+  });
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdResetRequest.save({ session: sess });
+    user.resetPasswordRequests.push(createdResetRequest);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      "Creating password reset request failed, please try again.",
+      500
+    );
+    return next(error);
+  }
 
   //res.status(200).json({ message: "Deleted user." });
 };

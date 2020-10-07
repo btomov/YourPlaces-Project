@@ -12,6 +12,13 @@ const userSchema = new Schema({
   isAdmin: { type: Boolean, default: false },
   temporarytoken: { type: String, required: true },
   isConfirmed: { type: Boolean, required: true, default: false },
+  resetPasswordRequests: [
+    {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: "PwChangeRequest",
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);
