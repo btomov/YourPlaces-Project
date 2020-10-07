@@ -11,6 +11,14 @@ const sgTransport = require("nodemailer-sendgrid-transport");
 
 const mongoose = require("mongoose");
 
+const options = {
+  auth: {
+    api_user: process.env.SENDGRID_USERNAME,
+    api_key: process.env.SENDGRID_PASSWORD,
+  },
+};
+const client = nodemailer.createTransport(sgTransport(options));
+
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -153,14 +161,6 @@ const signup = async (req, res, next) => {
   }
 
   //Send verification email
-  const options = {
-    auth: {
-      api_user: process.env.SENDGRID_USERNAME,
-      api_key: process.env.SENDGRID_PASSWORD,
-    },
-  };
-  const client = nodemailer.createTransport(sgTransport(options));
-
   const emailActivate = {
     from: process.env.SENDGRID_SENDER,
     to: email,
@@ -327,6 +327,7 @@ const deleteUser = async (req, res, next) => {
 };
 
 const verifyUser = async (req, res, next) => {
+  //This needs more work, currently can display the "successfully verified" message with every token.
   User.findOne({ temporarytoken: req.params.token }, (err, user) => {
     if (err) throw err; // Throw error if cannot login
     const token = req.params.token; // Save the token from URL for verification
@@ -373,10 +374,10 @@ const resetPassword = async (req, res, next) => {
     const error = new HttpError("Could not find a user with that email.", 404);
     return next(error);
   }
-
-  let token;
+  //Token that we can send to the user's email
+  let restorationToken;
   try {
-    token = jwt.sign(
+    restorationToken = jwt.sign(
       {
         userId: user.id,
         email: user.email,
@@ -391,11 +392,42 @@ const resetPassword = async (req, res, next) => {
     );
     return next(error);
   }
+  //Token that we store in the DB for extra security
+  let hashedToken;
+  try {
+    hashedToken = await bcrypt.hash(restorationToken, 12);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not create user, please try again.",
+      500,
+      err
+    );
+    return next(error);
+  }
 
   const createdResetRequest = new PwChangeRequest({
     userId: user._id,
-    token,
+    hashedToken,
   });
+
+  //Send a restoration email
+  const resetPwEmail = {
+    from: process.env.SENDGRID_SENDER,
+    to: user.email,
+    subject: "Password Reset Request",
+    //text: `Copy and paste this link: ${process.env.REACT_APP_BACKEND_URL}/verify/${temporarytoken}`,
+    text: `Copy and paste this link: http://localhost:3000/verify/${restorationToken}`,
+    html: `
+    <a href='http://localhost:3000/verify/${restorationToken}'>
+      Click here to choose a new password.
+    </a>`,
+  };
+
+  try {
+    client.sendMail(resetPwEmail);
+  } catch (error) {
+    return next(error);
+  }
 
   try {
     const sess = await mongoose.startSession();
@@ -412,7 +444,9 @@ const resetPassword = async (req, res, next) => {
     return next(error);
   }
 
-  //res.status(200).json({ message: "Deleted user." });
+  res
+    .status(200)
+    .json({ message: "Password restoration email has been sent." });
 };
 
 exports.getUsers = getUsers;
