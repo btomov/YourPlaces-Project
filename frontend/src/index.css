@@ -10,7 +10,7 @@ html {
 
 body {
   margin: 0;
-  background: #4d4d4d;
+  background-image: url("https://images.unsplash.com/photo-1602054618838-5e8ceb470ab5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
 }
 
 .slide-in-left-enter {

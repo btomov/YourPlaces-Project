@@ -176,6 +176,8 @@ const Auth = () => {
             errorText="Please enter a valid password, at least 6 characters."
             onInput={inputHandler}
           />
+          <a href="/forgot-password">Reset Password</a>
+          <hr />
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "SIGNUP"}
           </Button>

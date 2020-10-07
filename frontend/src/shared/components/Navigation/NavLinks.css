@@ -71,13 +71,13 @@
   }
 
   .nav-links a {
-    color: white;
+    color: black;
     text-decoration: none;
   }
 
   .nav-links button {
     border: 1px solid white;
-    color: white;
+    color: black;
     background: transparent;
   }
 
