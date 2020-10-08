@@ -5,7 +5,6 @@ const Schema = mongoose.Schema;
 const pwChangeSchema = new Schema(
   {
     userId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
-    //userId: { type: mongoose.Types.ObjectId, ref: "User" },
     token: { type: String, required: true },
     createdAt: Number,
     updatedAt: Number,

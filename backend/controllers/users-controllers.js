@@ -356,7 +356,7 @@ const verifyUser = async (req, res, next) => {
   });
 };
 
-const resetPassword = async (req, res, next) => {
+const resetPasswordRequest = async (req, res, next) => {
   const email = req.body.email;
 
   let user;
@@ -364,7 +364,7 @@ const resetPassword = async (req, res, next) => {
     user = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not delete user.",
+      "Something went wrong, fetch a user user.",
       500
     );
     return next(error);
@@ -386,10 +386,7 @@ const resetPassword = async (req, res, next) => {
       { expiresIn: "5m" }
     );
   } catch (err) {
-    const error = new HttpError(
-      "Logging in failed, please try again later.",
-      500
-    );
+    const error = new HttpError("Could not generate a restoration token", 500);
     return next(error);
   }
   //Token that we store in the DB for extra security
@@ -398,7 +395,7 @@ const resetPassword = async (req, res, next) => {
     hashedToken = await bcrypt.hash(restorationToken, 12);
   } catch (err) {
     const error = new HttpError(
-      "Could not create user, please try again.",
+      "Could not hash the restoration token.",
       500,
       err
     );
@@ -407,27 +404,8 @@ const resetPassword = async (req, res, next) => {
 
   const createdResetRequest = new PwChangeRequest({
     userId: user._id,
-    hashedToken,
+    token: hashedToken,
   });
-
-  //Send a restoration email
-  const resetPwEmail = {
-    from: process.env.SENDGRID_SENDER,
-    to: user.email,
-    subject: "Password Reset Request",
-    //text: `Copy and paste this link: ${process.env.REACT_APP_BACKEND_URL}/verify/${temporarytoken}`,
-    text: `Copy and paste this link: http://localhost:3000/verify/${restorationToken}`,
-    html: `
-    <a href='http://localhost:3000/verify/${restorationToken}'>
-      Click here to choose a new password.
-    </a>`,
-  };
-
-  try {
-    client.sendMail(resetPwEmail);
-  } catch (error) {
-    return next(error);
-  }
 
   try {
     const sess = await mongoose.startSession();
@@ -439,8 +417,28 @@ const resetPassword = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Creating password reset request failed, please try again.",
-      500
+      500,
+      err
     );
+    return next(error);
+  }
+
+  //Send a restoration email
+  const resetPwEmail = {
+    from: process.env.SENDGRID_SENDER,
+    to: user.email,
+    subject: "Password Reset Request",
+    //text: `Copy and paste this link: ${process.env.REACT_APP_BACKEND_URL}/verify/${temporarytoken}`,
+    text: `Copy and paste this link: http://localhost:3000/verify/${restorationToken}`,
+    html: `
+    <a href='http://localhost:3000/reset-password/${restorationToken}'>
+      Click here to choose a new password.
+    </a>`,
+  };
+
+  try {
+    client.sendMail(resetPwEmail);
+  } catch (error) {
     return next(error);
   }
 
@@ -449,10 +447,54 @@ const resetPassword = async (req, res, next) => {
     .json({ message: "Password restoration email has been sent." });
 };
 
+const resetPassword = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
+  const { title, description } = req.body;
+  const placeId = req.params.pid;
+
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update place.",
+      500
+    );
+    return next(error);
+  }
+
+  if (place.creator.toString() !== req.userData.userId) {
+    const error = new HttpError("You are not allowed to edit this place.", 401);
+    return next(error);
+  }
+
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update place.",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
+};
+
 exports.getUsers = getUsers;
 exports.getUserById = getUserById;
 exports.signup = signup;
 exports.login = login;
 exports.deleteUser = deleteUser;
 exports.verifyUser = verifyUser;
+exports.resetPasswordRequest = resetPasswordRequest;
 exports.resetPassword = resetPassword;

@@ -22,7 +22,9 @@ router.post(
   usersController.signup
 );
 
-router.post("/reset-password", usersController.resetPassword);
+router.post("/reset-password", usersController.resetPasswordRequest);
+
+router.patch("/reset-password/:resetToken", usersController.resetPassword);
 
 router.post("/verify/:token", usersController.verifyUser);
 

@@ -22,6 +22,7 @@ import "./Auth.css";
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isRestoringPassword, setIsRestoringPassword] = useState(false);
   const [showVerifyWindow, setShowVerifyWindow] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   //const history = useHistory();
@@ -71,7 +72,7 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    if (isLoginMode) {
+    if (isLoginMode && !isRestoringPassword) {
       try {
         const responseData = await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/users/login`,
@@ -92,7 +93,7 @@ const Auth = () => {
           responseData.isAdmin
         );
       } catch (err) {}
-    } else {
+    } else if (!isLoginMode && !isRestoringPassword) {
       try {
         const formData = new FormData();
         formData.append("email", formState.inputs.email.value);
@@ -111,10 +112,19 @@ const Auth = () => {
           "We have sent you an email! Please verify your account before logging in"
         );
         //history.push("/");
-
-        // Don't log users in instantly, only let them log after verifying their email
-        //auth.login(responseData.userId, responseData.token);
       } catch (err) {}
+    } else if (isRestoringPassword) {
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/users/reset-password`,
+        "POST",
+        JSON.stringify({ email: formState.inputs.email.value }),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      toast.info(
+        "We have sent you an email containing a link to reset your password."
+      );
     }
   };
 
@@ -136,10 +146,10 @@ const Auth = () => {
       <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
-        <h2>Login Required</h2>
+        <h2>{!isRestoringPassword ? "Login Required" : "Reset Password"}</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
-          {!isLoginMode && (
+          {!isLoginMode && !isRestoringPassword && (
             <Input
               element="input"
               id="username"
@@ -150,6 +160,7 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
+          {/* Register Mode */}
           {!isLoginMode && (
             <ImageUpload
               center
@@ -158,33 +169,65 @@ const Auth = () => {
               errorText="Please provide an image."
             />
           )}
-          <Input
-            element="input"
-            id="email"
-            type="email"
-            label="E-Mail"
-            validators={[VALIDATOR_EMAIL()]}
-            errorText="Please enter a valid email address."
-            onInput={inputHandler}
-          />
-          <Input
-            element="input"
-            id="password"
-            type="password"
-            label="Password"
-            validators={[VALIDATOR_MINLENGTH(6)]}
-            errorText="Please enter a valid password, at least 6 characters."
-            onInput={inputHandler}
-          />
-          <a href="reset-password">Reset Password</a>
-          <hr />
-          <Button type="submit" disabled={!formState.isValid}>
-            {isLoginMode ? "LOGIN" : "SIGNUP"}
-          </Button>
+          {!isRestoringPassword && (
+            <div>
+              <Input
+                element="input"
+                id="email"
+                type="email"
+                label="E-Mail"
+                validators={[VALIDATOR_EMAIL()]}
+                errorText="Please enter a valid email address."
+                onInput={inputHandler}
+              />
+              <Input
+                element="input"
+                id="password"
+                type="password"
+                label="Password"
+                validators={[VALIDATOR_MINLENGTH(6)]}
+                errorText="Please enter a valid password, at least 6 characters."
+                onInput={inputHandler}
+              />
+            </div>
+          )}
+          {/* Reset Password Mode */}
+          {isRestoringPassword && (
+            <div>
+              <Input
+                element="input"
+                id="email"
+                type="text"
+                label="Your email"
+                validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
+                errorText="Please enter an email."
+                onInput={inputHandler}
+              />
+              <Button type="submit">Send Reset Email</Button>
+            </div>
+          )}
+
+          {isLoginMode && !isRestoringPassword && (
+            <div>
+              <button
+                className="reset-password-button"
+                onClick={() => setIsRestoringPassword(true)}>
+                Reset Password
+              </button>
+              <hr />
+            </div>
+          )}
+          {!isRestoringPassword && (
+            <Button type="submit" disabled={!formState.isValid}>
+              {isLoginMode ? "LOGIN" : "SIGNUP"}
+            </Button>
+          )}
         </form>
-        <Button inverse onClick={switchModeHandler}>
-          SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
-        </Button>
+        {!isRestoringPassword && (
+          <Button inverse onClick={switchModeHandler}>
+            SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
+          </Button>
+        )}
       </Card>
     </React.Fragment>
   );
