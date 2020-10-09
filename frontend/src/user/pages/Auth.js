@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import "react-toastify/dist/ReactToastify.min.css";
 
-//import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -23,9 +23,8 @@ const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isRestoringPassword, setIsRestoringPassword] = useState(false);
-  const [showVerifyWindow, setShowVerifyWindow] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  //const history = useHistory();
+  const history = useHistory();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -105,13 +104,11 @@ const Auth = () => {
           "POST",
           formData
         );
-        setShowVerifyWindow(true);
-
         //Need to make notification stay while we reload the page. Maybe instead of redirecting to /verify on email click, we do "/" and show a notification?
         toast.info(
           "We have sent you an email! Please verify your account before logging in"
         );
-        //history.push("/");
+        history.push("/");
       } catch (err) {}
     } else if (isRestoringPassword) {
       await sendRequest(
@@ -122,27 +119,15 @@ const Auth = () => {
           "Content-Type": "application/json",
         }
       );
+      history.push("/");
       toast.info(
-        "We have sent you an email containing a link to reset your password."
+        "We have sent you an email containing a link to reset your password. Keep in mind it will only be valid for 5 minutes."
       );
     }
   };
 
   return (
     <React.Fragment>
-      {showVerifyWindow && (
-        <ToastContainer
-          position="top-center"
-          autoClose={10000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      )}
       <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}

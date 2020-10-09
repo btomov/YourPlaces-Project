@@ -15,6 +15,7 @@ import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
+import { ToastContainer } from "react-toastify";
 
 const Users = React.lazy(() => import("./user/pages/Users"));
 const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
@@ -73,30 +74,45 @@ const App = () => {
   }
 
   return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn: !!token,
-        username: username,
-        token: token,
-        userId: userId,
-        isAdmin: isAdmin,
-        login: login,
-        logout: logout,
-      }}>
-      <Router>
-        <MainNavigation />
-        <main>
-          <Suspense
-            fallback={
-              <div className="center">
-                <LoadingSpinner />
-              </div>
-            }>
-            {routes}
-          </Suspense>
-        </main>
-      </Router>
-    </AuthContext.Provider>
+    <React.Fragment>
+      {" "}
+      <ToastContainer
+        position="top-center"
+        autoClose={10000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      ;
+      <AuthContext.Provider
+        value={{
+          isLoggedIn: !!token,
+          username: username,
+          token: token,
+          userId: userId,
+          isAdmin: isAdmin,
+          login: login,
+          logout: logout,
+        }}>
+        <Router>
+          <MainNavigation />
+          <main>
+            <Suspense
+              fallback={
+                <div className="center">
+                  <LoadingSpinner />
+                </div>
+              }>
+              {routes}
+            </Suspense>
+          </main>
+        </Router>
+      </AuthContext.Provider>
+    </React.Fragment>
   );
 };
 
