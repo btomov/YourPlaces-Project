@@ -64,7 +64,7 @@ const App = () => {
         <Route path="/verify/:tempToken">
           <ConfirmEmail />
         </Route>
-        <Route path="/reset-password/:resetToken">
+        <Route path="/reset-password/:identificationToken/:restorationToken">
           <ResetPassword />
         </Route>
         <Redirect to="/auth" />

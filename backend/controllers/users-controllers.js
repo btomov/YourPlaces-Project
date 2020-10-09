@@ -374,10 +374,11 @@ const resetPasswordRequest = async (req, res, next) => {
     const error = new HttpError("Could not find a user with that email.", 404);
     return next(error);
   }
-  //Token that we can send to the user's email
-  let restorationToken;
+
+  //Token that we can send to the user's email and USE TO FIND THE USER
+  let identificationToken;
   try {
-    restorationToken = jwt.sign(
+    identificationToken = jwt.sign(
       {
         userId: user.id,
         email: user.email,
@@ -389,7 +390,24 @@ const resetPasswordRequest = async (req, res, next) => {
     const error = new HttpError("Could not generate a restoration token", 500);
     return next(error);
   }
-  //Token that we store in the DB for extra security
+
+  let restorationToken;
+  try {
+    restorationToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        identificationToken,
+      },
+      process.env.JWT_KEY,
+      { expiresIn: "5m" }
+    );
+  } catch (err) {
+    const error = new HttpError("Could not generate a restoration token", 500);
+    return next(error);
+  }
+
+  //Token that we store in the DB for extra security. We also send this to the user, UNHASHED (so restorationToken)
   let hashedToken;
   try {
     hashedToken = await bcrypt.hash(restorationToken, 12);
@@ -404,7 +422,8 @@ const resetPasswordRequest = async (req, res, next) => {
 
   const createdResetRequest = new PwChangeRequest({
     userId: user._id,
-    token: hashedToken,
+    identificationToken,
+    hashedToken,
   });
 
   try {
@@ -429,11 +448,11 @@ const resetPasswordRequest = async (req, res, next) => {
     to: user.email,
     subject: "Password Reset Request",
     //text: `Copy and paste this link: ${process.env.REACT_APP_BACKEND_URL}/verify/${temporarytoken}`,
-    text: `Copy and paste this link: http://localhost:3000/verify/${restorationToken}`,
+    text: `Copy and paste this link: http://localhost:3000/verify/${identificationToken}/${restorationToken}`,
     html: `
-    <a href='http://localhost:3000/reset-password/${restorationToken}'>
+    <a href='http://localhost:3000/reset-password/${identificationToken}/${restorationToken}'>
       Click here to choose a new password.
-    </a>`,
+    </a><p>Your link will expire in 5 minutes</p>`,
   };
 
   try {
@@ -447,47 +466,110 @@ const resetPasswordRequest = async (req, res, next) => {
     .json({ message: "Password restoration email has been sent." });
 };
 
+const confirmResetTokenValidity = async (req, res, next) => {
+  const identificationToken = req.params.identificationToken;
+  const restorationToken = req.params.restorationToken;
+  //Get two tokens, 1 we send to the user's email for identification in the DB, other we do bcrypt compare to
+
+  let foundPwRequest;
+  try {
+    foundPwRequest = await await PwChangeRequest.findOne({
+      identificationToken: identificationToken,
+    }).populate("userId"); //We can optimize this by not populating and instead sending the userId through the email link, but that's for later on
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find token",
+      500
+    );
+    return next(error);
+  }
+
+  if (!foundPwRequest) {
+    const error = new HttpError(
+      "Your link is expired or invalid. Please request a new one.",
+      404
+    );
+    return next(error);
+  }
+
+  let isValidToken = false;
+  try {
+    isValidToken = await bcrypt.compare(
+      restorationToken,
+      foundPwRequest.hashedToken
+    );
+  } catch (err) {
+    const error = new HttpError("Could not compare the tokens", 500, err);
+    return next(error);
+  }
+
+  if (!isValidToken) {
+    const error = new HttpError("Invalid token.", 403);
+    return next(error);
+  }
+  //Tbd if i want to return the whole request or just validity
+  //res.status(200).json({ foundPwRequest });
+  res.status(200).json({ isValidToken, userId: foundPwRequest.userId._id });
+  //res.status(200).json({ isValidToken });
+};
+
 const resetPassword = async (req, res, next) => {
+  const { password, userId } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("failed validation");
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
 
-  const { title, description } = req.body;
-  const placeId = req.params.pid;
-
-  let place;
+  let user;
   try {
-    place = await Place.findById(placeId);
+    user = await User.findById(userId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not update place.",
-      500
+      "Something went wrong, could not find user.",
+      500,
+      err
     );
     return next(error);
   }
 
-  if (place.creator.toString() !== req.userData.userId) {
-    const error = new HttpError("You are not allowed to edit this place.", 401);
+  if (!user) {
+    const error = new HttpError("User not found.", 404);
     return next(error);
   }
 
-  place.title = title;
-  place.description = description;
-
+  let hashedPassword;
   try {
-    await place.save();
+    hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not update place.",
-      500
+      "Could not change password, please try again.",
+      500,
+      err
+    );
+    return next(error);
+  }
+  user.password = hashedPassword;
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    user.resetPasswordRequests = [];
+    await PwChangeRequest.deleteMany({ userId: user._id });
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update password.",
+      500,
+      err
     );
     return next(error);
   }
 
-  res.status(200).json({ place: place.toObject({ getters: true }) });
+  res.status(200).json({ user: user.toObject({ getters: true }) });
 };
 
 exports.getUsers = getUsers;
@@ -498,3 +580,4 @@ exports.deleteUser = deleteUser;
 exports.verifyUser = verifyUser;
 exports.resetPasswordRequest = resetPasswordRequest;
 exports.resetPassword = resetPassword;
+exports.confirmResetTokenValidity = confirmResetTokenValidity;

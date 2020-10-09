@@ -24,7 +24,12 @@ router.post(
 
 router.post("/reset-password", usersController.resetPasswordRequest);
 
-router.patch("/reset-password/:resetToken", usersController.resetPassword);
+router.get(
+  "/reset-password/:identificationToken/:restorationToken",
+  usersController.confirmResetTokenValidity
+);
+
+router.patch("/reset-password", usersController.resetPassword);
 
 router.post("/verify/:token", usersController.verifyUser);
 
