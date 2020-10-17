@@ -24,6 +24,7 @@ const UpdatePlace = React.lazy(() => import("./places/pages/UpdatePlace"));
 const Auth = React.lazy(() => import("./user/pages/Auth"));
 const ConfirmEmail = React.lazy(() => import("./user/pages/ConfirmEmail"));
 const ResetPassword = React.lazy(() => import("./user/pages/ResetPassword"));
+const Settings = React.lazy(() => import("./user/pages/Settings"));
 
 const App = () => {
   const { username, token, login, logout, userId, isAdmin } = useAuth();
@@ -46,6 +47,9 @@ const App = () => {
         </Route>
         <Route path="/verify/:tempToken">
           <ConfirmEmail />
+        </Route>
+        <Route path="/settings">
+          <Settings />
         </Route>
         <Redirect to="/" />
       </Switch>

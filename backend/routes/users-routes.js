@@ -29,6 +29,13 @@ router.get(
   usersController.confirmResetTokenValidity
 );
 
+router.patch(
+  "/update-user-settings/:uid",
+  fileUpload.single("image"),
+  // [check("email").normalizeEmail().isEmail()],
+  usersController.updateUser
+);
+
 router.patch("/reset-password", usersController.resetPassword);
 
 router.post("/verify/:token", usersController.verifyUser);

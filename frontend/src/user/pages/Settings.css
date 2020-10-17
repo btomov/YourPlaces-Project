@@ -1,0 +1,88 @@
+.container{
+    background-color: white;
+    display: flex;
+    width: 70%;
+    min-height: 500px;
+    margin: auto;
+    border: 1px dotted grey;
+}
+
+.sidebar{
+    width: 30%;
+    border: 1px dotted grey;
+}
+
+.settings{
+    justify-content: center;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings__profile-picture{
+    /* display: flex; */
+    /* align-items: center;
+    justify-content: center; */
+    /* margin-top: 2rem; */
+}
+
+.settings__profile-picture div img {
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0 auto;
+}
+
+.settings__username{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.settings__username-name{
+    font-size: 1.4rem;
+}
+
+.settings__form{
+    display: flex;
+    flex-direction: column;
+    width: 30rem;
+    margin: 3rem auto;
+}
+
+.settings__form-username{
+    
+    /* width:30rem; */
+}
+
+.settings__form Button{
+    margin-top: 2rem;
+    align-self: center;
+    width: 15rem;
+}
+
+
+/* Sidebar */
+.sidebar{
+    flex: 0 0 18%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.side-nav{
+    list-style-type: none;
+}
+
+.side-nav__item{
+    height: 3rem;
+    margin-left: 0px;
+    width: 100%;
+}
+
+.side-nav__item:hover{
+    background-color: grey;
+}
+

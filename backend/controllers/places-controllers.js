@@ -32,7 +32,7 @@ const getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) });
 };
 
-const getPlacesByUserId = async (req, res, next) => {
+const getPlacesByUsername = async (req, res, next) => {
   const username = new RegExp(`^${req.params.username}$`, "i");
   // let places;
   let userWithPlaces;
@@ -215,7 +215,7 @@ const deletePlace = async (req, res, next) => {
 };
 
 exports.getPlaceById = getPlaceById;
-exports.getPlacesByUserId = getPlacesByUserId;
+exports.getPlacesByUsername = getPlacesByUsername;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;

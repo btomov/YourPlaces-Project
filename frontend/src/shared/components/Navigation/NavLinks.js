@@ -25,9 +25,6 @@ const NavLinks = (props) => {
       fetchUser();
     }
   }, [sendRequest, auth.isLoggedIn, auth.userId, auth]);
-  const logoutAndRedirect = () => {
-    auth.logout();
-  };
   return (
     <ul className="nav-links">
       <li>
@@ -35,11 +32,11 @@ const NavLinks = (props) => {
           ALL USERS
         </NavLink>
       </li>
-      {auth.isLoggedIn && (
+      {/* {auth.isLoggedIn && (
         <li>
           <NavLink to={`/${auth.username}/places`}>MY PLACES</NavLink>
         </li>
-      )}
+      )} */}
       {auth.isLoggedIn && (
         <li>
           <NavLink to="/places/new">ADD PLACE</NavLink>
@@ -54,15 +51,15 @@ const NavLinks = (props) => {
         <div className="isLoggedIn">
           <AvatarButton
             avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.image}`}
-            username={auth.username}
+            username={auth.username} //MAJOR TODO: AUTH IS NOT UPDATING USERNAME, APPARENTLY.
           />
         </div>
       )}
-      {auth.isLoggedIn && (
+      {/* {auth.isLoggedIn && (
         <li>
-          <button onClick={logoutAndRedirect}>LOGOUT</button>
+          <button onClick={()=>auth.logout()}>LOGOUT</button>
         </li>
-      )}
+      )} */}
     </ul>
   );
 };

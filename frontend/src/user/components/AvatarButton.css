@@ -6,4 +6,7 @@
     object-fit: cover;
     width: 15em;
     height: 3em;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }

@@ -35,7 +35,6 @@ const getUsers = async (req, res, next) => {
 
 const getUserById = async (req, res, next) => {
   const userId = req.params.uid;
-  //console.log(userId); //Pops if i go directly to /users/id OR apparently if i go to My Places..but only sometimes?
   let user;
   try {
     user = await User.findById(userId);
@@ -133,6 +132,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     let errorMsg;
     if (err.errors.username) {
+      //TODO: Include email checks? Should also be unique
       errorMsg = "This username is already taken";
     } else {
       errorMsg = "Signing up failed, please try again later.";
@@ -572,6 +572,68 @@ const resetPassword = async (req, res, next) => {
   res.status(200).json({ user: user.toObject({ getters: true }) });
 };
 
+const updateUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
+  const { username, email, password } = req.body;
+  const userId = req.params.uid;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update user.",
+      500
+    );
+    return next(error);
+  }
+
+  if (password) {
+    let hashedPassword;
+    try {
+      hashedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+      const error = new HttpError(
+        "Could not change password, please try again.",
+        500,
+        err
+      );
+      return next(error);
+    }
+    user.password = hashedPassword;
+  }
+
+  user.username = username;
+  user.email = email;
+  if (req.file) {
+    //Delete old picture before putting in a new one
+    fs.unlink(user.image, (err) => {
+      console.log(err);
+    });
+    user.image = req.file.path;
+  }
+
+  try {
+    await user.save();
+  } catch (err) {
+    let errorMsg;
+    if (err.errors.username || err.errors.email) {
+      errorMsg = "User details need to be unique.";
+    } else {
+      errorMsg = "Something went wrong, could not update user.";
+    }
+    const error = new HttpError(errorMsg, 500, err);
+    return next(error);
+  }
+  res.status(200).json({ user: user.toObject({ getters: true }) });
+};
+
 exports.getUsers = getUsers;
 exports.getUserById = getUserById;
 exports.signup = signup;
@@ -581,3 +643,4 @@ exports.verifyUser = verifyUser;
 exports.resetPasswordRequest = resetPasswordRequest;
 exports.resetPassword = resetPassword;
 exports.confirmResetTokenValidity = confirmResetTokenValidity;
+exports.updateUser = updateUser;
