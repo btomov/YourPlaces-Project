@@ -24,7 +24,7 @@ const NavLinks = (props) => {
       };
       fetchUser();
     }
-  }, [sendRequest, auth.isLoggedIn, auth.userId, auth]);
+  }, [sendRequest, auth.isLoggedIn, auth.userId, auth.username, auth]);
   return (
     <ul className="nav-links">
       <li>
@@ -51,7 +51,7 @@ const NavLinks = (props) => {
         <div className="isLoggedIn">
           <AvatarButton
             avatar={`${process.env.REACT_APP_ASSET_URL}/${userData.image}`}
-            username={auth.username} //MAJOR TODO: AUTH IS NOT UPDATING USERNAME, APPARENTLY.
+            username={auth.username}
           />
         </div>
       )}
