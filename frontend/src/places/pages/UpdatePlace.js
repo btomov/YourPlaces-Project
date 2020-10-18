@@ -26,22 +26,22 @@ const UpdatePlace = (props) => {
     {
       title: {
         value: "",
-        isValid: false,
+        isValid: true,
       },
       description: {
         value: "",
-        isValid: false,
+        isValid: true,
       },
       address: {
         value: "",
-        isValid: false,
+        isValid: true,
       },
       image: {
         value: null,
-        isValid: false,
+        isValid: true,
       },
     },
-    false
+    true
   );
 
   useEffect(() => {

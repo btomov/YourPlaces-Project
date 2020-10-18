@@ -20,7 +20,6 @@ const Settings = (props) => {
   const userId = auth.userId;
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [userData, setUserData] = useState();
-  const [forceUpdate, setForceUpdate] = useState();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -52,7 +51,7 @@ const Settings = (props) => {
       } catch (err) {}
     };
     fetchUser();
-  }, [sendRequest, userId, forceUpdate]);
+  }, [sendRequest, userId]);
 
   //Set inital form data
   useEffect(() => {
@@ -79,11 +78,10 @@ const Settings = (props) => {
       } catch (err) {}
     };
     fetchUser();
-  }, [setFormData, userData, forceUpdate]);
+  }, [setFormData, userData]);
 
   const updateUserSubmitHandler = async (event) => {
     event.preventDefault();
-    setForceUpdate(!forceUpdate); //Doesnt work
     if (!isChangingPassword) {
       try {
         const formData = new FormData();

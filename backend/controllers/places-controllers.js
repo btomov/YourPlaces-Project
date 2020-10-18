@@ -130,6 +130,7 @@ const updatePlace = async (req, res, next) => {
 
   const { title, description, address } = req.body;
   const placeId = req.params.pid;
+
   let place;
   try {
     place = await Place.findById(placeId);
@@ -149,11 +150,8 @@ const updatePlace = async (req, res, next) => {
   place.title = title;
   place.description = description;
   place.address = address;
-  if (!req.file || !req.file.path) {
-    return next();
-  }
 
-  if (req.file.path) {
+  if (req.file) {
     fs.unlink(place.image, (err) => {
       console.log(err);
     });
