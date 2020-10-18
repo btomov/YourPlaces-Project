@@ -16,7 +16,7 @@
     "semantic-ui-react": "^2.0.0"
   },
   "scripts": {
-    "watch:sass": "node-sass sass/main.scss css/style.css -w",
+    "watch:sass": "node-sass sass/main.scss src/css/style.css -w",
     "react-start": "react-scripts start",
     "start": "npm-run-all --parallel react-start watch:sass",
     "compile:sass": "node-sass sass/main.scss css/style.comp.css",

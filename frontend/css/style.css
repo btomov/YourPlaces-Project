@@ -144,9 +144,26 @@ body {
   .nav-links button:focus {
     outline: none; }
   .nav-links button:hover,
-  .nav-links * button:active {
+  .nav-links button:active {
     background: #292929;
     color: white; }
+
+@media (min-width: 768px) {
+  .nav-links {
+    flex-direction: row; }
+    .nav-links li {
+      margin: 0 0.5rem; }
+    .nav-links a {
+      color: black;
+      text-decoration: none; }
+    .nav-links button {
+      border: 1px solid white;
+      color: black;
+      background: transparent; }
+    .nav-links button:hover,
+    .nav-links button:active {
+      background: #f8df00;
+      color: #292929; } }
 
 .isLoggedIn {
   color: black;
@@ -160,19 +177,46 @@ body {
 #username-text {
   margin-left: 1rem; }
 
+.place-item {
+  margin: 1rem 0; }
+  .place-item__content {
+    padding: 0; }
+  .place-item__info {
+    padding: 1rem;
+    text-align: center; }
+  .place-item .place-item__image {
+    width: 100%;
+    height: 12.5rem;
+    margin-right: 1.5rem;
+    margin-bottom: 3rem; }
+    .place-item .place-item__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; }
+  .place-item__info h2,
+  .place-item__info h3,
+  .place-item__info p {
+    margin: 0 0 0.5rem 0; }
+  .place-item__actions {
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid #ccc; }
+  .place-item__modal-content {
+    padding: 0; }
+  .place-item__modal-actions {
+    text-align: right; }
+
+.map-container {
+  height: 15rem;
+  width: 100%; }
+
 @media (min-width: 768px) {
-  .nav-links {
-    flex-direction: row; }
-  .nav-links li {
-    margin: 0 0.5rem; }
-  .nav-links a {
-    color: black;
-    text-decoration: none; }
-  .nav-links button {
-    border: 1px solid white;
-    color: black;
-    background: transparent; }
-  .nav-links button:hover,
-  .nav-links button:active {
-    background: #f8df00;
-    color: #292929; } }
+  .place-item__image {
+    height: 20rem; } }
+
+.place-list {
+  list-style: none;
+  margin: 1rem auto;
+  padding: 0;
+  width: 90%;
+  max-width: 40rem; }

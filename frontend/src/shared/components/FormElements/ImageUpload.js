@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import Avatar from "../UIElements/Avatar";
 
 import Button from "./Button";
-import "./ImageUpload.css";
 
 const ImageUpload = (props) => {
   const [file, setFile] = useState();
@@ -63,7 +62,7 @@ const ImageUpload = (props) => {
         )}
         {/* Not avatar */}
         {!props.isAvatar && (
-          <div className={`image-upload__preview ${props.wide && "wide"}`}>
+          <div className={`image-upload__preview${props.wide && "--wide"}`}>
             {(previewUrl || props.image) && (
               <img src={previewUrl || props.image} alt="Preview" />
             )}

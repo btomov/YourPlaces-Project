@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
 import Button from "../../shared/components/FormElements/Button";
-import "./PlaceList.css";
+// import "./PlaceList.css";
 import { AuthContext } from "../../shared/context/auth-context";
 
 const PlaceList = (props) => {

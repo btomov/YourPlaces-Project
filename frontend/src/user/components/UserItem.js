@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-//import { Button } from "reactstrap";
 import Button from "../../shared/components/FormElements/Button";
 
 import Modal from "../../shared/components/UIElements/Modal";
@@ -11,7 +10,6 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import Avatar from "../../shared/components/UIElements/Avatar";
 import Card from "../../shared/components/UIElements/Card";
 import { AuthContext } from "../../shared/context/auth-context";
-import "./UserItem.css";
 
 const UserItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();

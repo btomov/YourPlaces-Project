@@ -1,0 +1,78 @@
+///////////////////////////////////////////
+// AvatarButton
+.avatar {
+  display: block;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  width: 15em;
+  height: 3em;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+///////////////////////////////////////////
+// UserItem
+
+.user-item {
+  margin: 1rem;
+  width: calc(45% - 2rem);
+  min-width: 17.5rem;
+  & a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    padding: 1rem;
+    color: white;
+    background: #292929;
+  }
+  & a:hover,
+  & a:active {
+    background: #ffd900;
+  }
+
+  &__content {
+    padding: 0 !important;
+  }
+
+  &__image {
+    width: 4rem;
+    height: 4rem;
+    margin-right: 1rem;
+  }
+
+  &__info h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: normal;
+    color: #ffd900;
+  }
+
+  &:hover h2,
+  &:active h2,
+  &:hover h3,
+  &:active h3 {
+    color: #292929;
+  }
+
+  &__info h3 {
+    margin: 0;
+  }
+}
+
+///////////////////////////////////////////
+// UsersList
+.users-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 90%;
+  max-width: 70rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}

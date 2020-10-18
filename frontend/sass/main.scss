@@ -9,4 +9,11 @@
 
 @import "pages/home";
 
-@import "layout/navigation";
+// @import "layout/navigation";
+
+//Components
+@import "components/places";
+@import "components/users";
+//Shared Components
+@import "components/shared/formElements";
+@import "components/shared/navigation";

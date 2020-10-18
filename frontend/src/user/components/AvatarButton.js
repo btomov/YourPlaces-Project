@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import "./AvatarButton.css";
 import { Dropdown, Image } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../../shared/context/auth-context";

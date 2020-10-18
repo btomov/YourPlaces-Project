@@ -1,0 +1,149 @@
+/////////////////////////////////////////////////
+// Button
+.button {
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #ff0055;
+  border-radius: 4px;
+  background: #ff0055;
+  color: white;
+  cursor: pointer;
+  margin-right: 1rem;
+  text-decoration: none;
+  display: inline-block;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:active {
+    background: #ff4382;
+    border-color: #ff4382;
+  }
+
+  &--inverse {
+    background: transparent;
+    color: #ff0055;
+  }
+
+  &--inverse:hover,
+  &--inverse:active {
+    color: white;
+    background: #ff0055;
+  }
+
+  &--danger {
+    background: #830000;
+    border-color: #830000;
+  }
+
+  &--danger:hover,
+  &--danger:active {
+    background: #f34343;
+    border-color: #f34343;
+  }
+
+  &:disabled,
+  &:hover:disabled,
+  &:active:disabled {
+    background: #ccc;
+    color: #979797;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  &--small {
+    font-size: 0.8rem;
+  }
+
+  &--big {
+    font-size: 1.5rem;
+  }
+
+  &-href {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    /*optional*/
+    font-family: arial, sans-serif;
+    /*input has OS specific font-family*/
+    color: #069;
+    cursor: pointer;
+  }
+}
+
+/////////////////////////////////////////////////
+// ImageUpload
+.image-upload {
+  & .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  &_preview {
+    width: 13rem;
+    height: 13rem;
+    border: 1px solid #ccc;
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1rem;
+
+    &--wide {
+      width: 100%;
+    }
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+/////////////////////////////////////////////////
+// Input
+.form-control {
+  margin: 1rem 0;
+
+  & label,
+  & input,
+  & textarea {
+    display: block;
+  }
+
+  & label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  & input,
+  & textarea {
+    width: 100%;
+    font: inherit;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 0.15rem 0.25rem;
+  }
+
+  & input:focus,
+  & textarea:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: #510077;
+  }
+
+  &--invalid label,
+  &--invalid p {
+    color: red;
+  }
+
+  &--invalid input,
+  &--invalid textarea {
+    border-color: red;
+    background: #ffd1d1;
+  }
+}
