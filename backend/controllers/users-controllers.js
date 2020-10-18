@@ -514,7 +514,7 @@ const confirmResetTokenValidity = async (req, res, next) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  const { password, userId } = req.body;
+  const { oldPassword, password, userId } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log("failed validation");
@@ -538,6 +538,28 @@ const resetPassword = async (req, res, next) => {
   if (!user) {
     const error = new HttpError("User not found.", 404);
     return next(error);
+  }
+
+  if (oldPassword) {
+    let isValidPassword = false;
+    try {
+      isValidPassword = await bcrypt.compare(oldPassword, user.password);
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not change password",
+        500,
+        err
+      );
+      return next(error);
+    }
+
+    if (!isValidPassword) {
+      const error = new HttpError(
+        "Incorrect old password. Please try again.",
+        403
+      );
+      return next(error);
+    }
   }
 
   let hashedPassword;

@@ -109,22 +109,25 @@ const Settings = (props) => {
     } else {
       //IS changing password
       try {
-        const formData = new FormData();
-        formData.append("password", formState.inputs.password.value);
-        formData.append("oldPassword", formState.inputs.oldPassword.value);
         const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/users/update-user-settings/${userData._id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/users/reset-password`,
           "PATCH",
-          formData
+          JSON.stringify({
+            oldPassword: formState.inputs.oldPassword.value,
+            password: formState.inputs.password.value,
+            userId: userData._id,
+          }),
+          {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + auth.token,
+          }
         );
-        // TODO: Decide if we want to kick users out after changing their password
-        // if (formState.inputs.username.value !== userData.username) {
-        //   auth.logout();
-        //   toast.info(
-        //     "You have to log back in for your username change to take effect."
-        //   );
-        // }
-        console.log(responseData);
+        if (responseData) {
+          auth.logout();
+          toast.info(
+            "Your password has been changed successfully, please log back in."
+          );
+        }
       } catch (err) {
         console.log(err);
       }

@@ -22,6 +22,7 @@ router.post(
   usersController.signup
 );
 
+//Maybe give this one a different URL because it matches with the Patch one atm
 router.post("/reset-password", usersController.resetPasswordRequest);
 
 router.get(
@@ -32,7 +33,7 @@ router.get(
 router.patch(
   "/update-user-settings/:uid",
   fileUpload.single("image"),
-  // [check("email").normalizeEmail().isEmail()],
+  [check("email").normalizeEmail().isEmail()],
   usersController.updateUser
 );
 

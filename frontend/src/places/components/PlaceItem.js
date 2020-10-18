@@ -51,7 +51,7 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
-  //Need to re-grab the place data after we update it, so we'll be getting everything from the DB instead of through props. Means i won't need most of the props, can delete from placelist
+  //TODO Need to re-grab the place data after we update it, so we'll be getting everything from the DB instead of through props. Means i won't need most of the props, can delete from placelist
   useEffect(() => {
     const fetchPlace = async () => {
       try {
@@ -101,15 +101,16 @@ const PlaceItem = (props) => {
       <li className="place-item">
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
-          <div className="place-item__image">
-            <img
-              src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
-              alt={props.title}
-            />
-          </div>
+
           {/* Load normal place if we're not editing */}
           {!isEditing && !isLoading && loadedPlace && (
             <div>
+              <div className="place-item__image">
+                <img
+                  src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
+                  alt={props.title}
+                />
+              </div>
               <div className="place-item__info">
                 <h2>{loadedPlace.title}</h2>
                 <h3>{loadedPlace.address}</h3>
@@ -137,6 +138,7 @@ const PlaceItem = (props) => {
               place={loadedPlace}
               placeId={props.id}
               setEditOff={stopEditHandler}
+              image={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
             />
           )}
         </Card>

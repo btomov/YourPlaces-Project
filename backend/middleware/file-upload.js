@@ -12,6 +12,7 @@ const fileUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       //Easy way to check if its a place or a user
+      console.log(req.body);
       if (req.body.address) {
         cb(null, "uploads/images/places");
       } else {

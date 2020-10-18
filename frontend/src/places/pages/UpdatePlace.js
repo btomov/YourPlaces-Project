@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-//import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -14,9 +14,12 @@ import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceForm.css";
+import "../components/PlaceItem.css";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const UpdatePlace = (props) => {
   const auth = useContext(AuthContext);
+  const history = useHistory();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
   const [formState, inputHandler, setFormData] = useForm(
@@ -27,6 +30,14 @@ const UpdatePlace = (props) => {
       },
       description: {
         value: "",
+        isValid: false,
+      },
+      address: {
+        value: "",
+        isValid: false,
+      },
+      image: {
+        value: null,
         isValid: false,
       },
     },
@@ -47,31 +58,42 @@ const UpdatePlace = (props) => {
               value: props.place.description,
               isValid: true,
             },
+            address: {
+              value: props.place.address,
+              isValid: true,
+            },
+            image: {
+              value: props.image,
+              isValid: true,
+            },
           },
           true
         );
       } catch (err) {}
     };
     fetchPlace();
-  }, [sendRequest, setFormData, props.place]);
+  }, [sendRequest, setFormData, props.place, props.image]);
 
   const placeUpdateSubmitHandler = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
+    console.log(formState.inputs.image.value);
     try {
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("image", formState.inputs.image.value);
+
       await sendRequest(
         `${process.env.REACT_APP_BACKEND_URL}/places/${props.placeId}`,
         "PATCH",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-        }),
+        formData,
         {
-          "Content-Type": "application/json",
           Authorization: "Bearer " + auth.token,
         }
       );
       props.setEditOff();
-      //history.push("/" + auth.userId + "/places");
+      history.push("/" + auth.username + "/places");
     } catch (err) {}
   };
 
@@ -92,12 +114,22 @@ const UpdatePlace = (props) => {
       </div>
     );
   }
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       {!isLoading && loadedPlace && (
-        <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
+        <form
+          className="place-form"
+          onSubmit={placeUpdateSubmitHandler}
+          encType="multipart/form-data">
+          <ImageUpload
+            id="image"
+            wide
+            image={props.image}
+            onInput={inputHandler}
+            initialValue={loadedPlace.image}
+            initialValid={true}
+          />
           <Input
             id="title"
             element="input"
@@ -119,6 +151,15 @@ const UpdatePlace = (props) => {
             initialValue={loadedPlace.description}
             initialValid={true}
             rows="10"
+          />
+          <Input
+            id="address"
+            element="input"
+            label="Address"
+            errorText="Please enter a valid address."
+            onInput={inputHandler}
+            initialValue={loadedPlace.address}
+            initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
             UPDATE PLACE
