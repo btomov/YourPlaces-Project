@@ -327,7 +327,7 @@ const deleteUser = async (req, res, next) => {
 };
 
 const verifyUser = async (req, res, next) => {
-  //This needs more work, currently can display the "successfully verified" message with every token.
+  //TODO This needs more work, currently can display the "successfully verified" message with every token.
   User.findOne({ temporarytoken: req.params.token }, (err, user) => {
     if (err) throw err; // Throw error if cannot login
     const token = req.params.token; // Save the token from URL for verification
