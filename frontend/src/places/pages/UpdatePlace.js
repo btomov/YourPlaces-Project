@@ -162,6 +162,9 @@ const UpdatePlace = (props) => {
           <Button type="submit" disabled={!formState.isValid}>
             UPDATE PLACE
           </Button>
+          <Button disabled={!formState.isValid} onClick={props.setEditOff}>
+            CANCEL
+          </Button>
         </form>
       )}
     </React.Fragment>

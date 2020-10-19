@@ -22,10 +22,15 @@ const PlaceItem = (props) => {
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
 
-  const startEditHandler = () => setIsEditing(true);
+  const startEditHandler = (placeId) => {
+    setIsEditing(true);
+    props.onEditStart(placeId);
+  };
+
   const stopEditHandler = () => {
     setIsEditing(false);
     setReloadPlace(!reloadPlace);
+    props.onEditEnd();
   };
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -66,17 +71,19 @@ const PlaceItem = (props) => {
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      <Modal
-        show={showMap}
-        onCancel={closeMapHandler}
-        header={props.address}
-        contentClass="place-item__modal-content"
-        footerClass="place-item__modal-actions"
-        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}>
-        <div className="map-container">
-          <Map center={props.coordinates} zoom={16} />
-        </div>
-      </Modal>
+      {loadedPlace && (
+        <Modal
+          show={showMap}
+          onCancel={closeMapHandler}
+          header={loadedPlace.address}
+          contentClass="place-item__modal-content"
+          footerClass="place-item__modal-actions"
+          footer={<Button onClick={closeMapHandler}>CLOSE</Button>}>
+          <div className="map-container">
+            <Map center={loadedPlace.coordinates} zoom={16} />
+          </div>
+        </Modal>
+      )}
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
@@ -106,8 +113,8 @@ const PlaceItem = (props) => {
             <div>
               <div className="place-item__image">
                 <img
-                  src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
-                  alt={props.title}
+                  src={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
+                  alt={loadedPlace.title}
                 />
               </div>
               <div className="place-item__info">
@@ -120,7 +127,9 @@ const PlaceItem = (props) => {
                   VIEW ON MAP
                 </Button>
                 {(auth.userId === props.creatorId || auth.isAdmin) && (
-                  <Button onClick={startEditHandler}>EDIT</Button>
+                  <Button onClick={() => startEditHandler(loadedPlace.id)}>
+                    EDIT
+                  </Button>
                 )}
 
                 {(auth.userId === props.creatorId || auth.isAdmin) && (

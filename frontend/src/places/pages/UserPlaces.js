@@ -9,6 +9,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 const UserPlaces = () => {
   const [loadedPlaces, setLoadedPlaces] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [reloadPlace, setReloadPlace] = useState();
 
   const userId = useParams().userId;
 
@@ -22,11 +23,18 @@ const UserPlaces = () => {
       } catch (err) {}
     };
     fetchPlaces();
-  }, [sendRequest, userId]);
+  }, [sendRequest, userId, reloadPlace]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
       prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
+  };
+
+  //When we start editing, hide all places that aren't the one we're working on. Questionable function naming
+  const filterNonUpdatingPlacesHandler = (updatingPlaceId) => {
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id === updatingPlaceId)
     );
   };
 
@@ -43,6 +51,8 @@ const UserPlaces = () => {
           userId={userId}
           items={loadedPlaces}
           onDeletePlace={placeDeletedHandler}
+          onEditStart={filterNonUpdatingPlacesHandler}
+          onEditEnd={() => setReloadPlace(!reloadPlace)}
         />
       )}
     </React.Fragment>
