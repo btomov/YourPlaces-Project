@@ -13,7 +13,6 @@ import {
 
 import { useForm } from "../../shared/hooks/form-hook";
 import { AuthContext } from "../../shared/context/auth-context";
-import "./Settings.css";
 
 const Settings = (props) => {
   const auth = useContext(AuthContext);

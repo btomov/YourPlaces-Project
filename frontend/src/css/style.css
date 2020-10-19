@@ -1,9 +1,47 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap");
 *,
 *::after,
 *::before {
   margin: 0;
   padding: 0;
   box-sizing: inherit; }
+
+* {
+  margin: 0;
+  padding: 0; }
+
+html {
+  font-family: "Open Sans", sans-serif; }
+
+body {
+  margin: 0;
+  background-image: url("https://images.unsplash.com/photo-1602054618838-5e8ceb470ab5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; }
+
+.slide-in-left-enter {
+  transform: translateX(-100%); }
+
+.slide-in-left-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 200ms; }
+
+.slide-in-left-exit {
+  transform: translateX(0%);
+  opacity: 1; }
+
+.slide-in-left-exit-active {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 200ms; }
+
+.center {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
 
 .place-item {
   margin: 1rem 0; }
@@ -205,19 +243,20 @@
     border-color: red;
     background: #ffd1d1; }
 
-.main {
+main {
   margin-top: 5rem; }
-  .main-header {
-    width: 100%;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.26);
-    padding: 0 1rem;
-    z-index: 5; }
+
+.main-header {
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.26);
+  padding: 0 1rem;
+  z-index: 5; }
 
 @media (min-width: 768px) {
   .main-header {
@@ -333,3 +372,208 @@
   width: 70%;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26); }
+
+.avatar {
+  width: 100%;
+  height: 100%; }
+  .avatar img {
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; }
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 10; }
+
+.card {
+  position: relative;
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  padding: 1rem;
+  overflow: hidden;
+  background: white; }
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 64px;
+  height: 64px; }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #510077;
+    border-color: #510077 transparent #510077 transparent;
+    animation: lds-dual-ring 1.2s linear infinite; }
+
+.loading-spinner__overlay {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+
+.map {
+  width: 100%;
+  height: 100%; }
+
+.modal {
+  z-index: 100;
+  position: fixed;
+  top: 22vh;
+  left: 10%;
+  width: 80%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 8px; }
+  .modal__header {
+    width: 100%;
+    padding: 1rem 0.5rem;
+    background: #2a006e;
+    color: white; }
+  .modal__header h2 {
+    margin: 0.5rem; }
+  .modal__content {
+    padding: 1rem 0.5rem; }
+  .modal__footer {
+    padding: 1rem 0.5rem; }
+  @media (min-width: 768px) {
+    .modal {
+      left: calc(50% - 20rem);
+      width: 40rem; } }
+  .modal-enter {
+    transform: translateY(-10rem);
+    opacity: 0; }
+  .modal-enter-active {
+    transform: translateY(0);
+    opacity: 1;
+    transition: all 200ms; }
+  .modal-exit {
+    transform: translateY(0);
+    opacity: 1; }
+  .modal-exit-active {
+    transform: translateY(-10rem);
+    opacity: 0;
+    transition: all 200ms; }
+
+.authentication {
+  width: 90%;
+  max-width: 25rem;
+  margin: 7rem auto;
+  text-align: center; }
+  .authentication__header {
+    color: white;
+    text-align: center; }
+  .authentication form {
+    margin-bottom: 1rem; }
+
+.reset-password-button {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  cursor: pointer; }
+
+.container {
+  background-color: #fffffff1;
+  display: flex;
+  width: 70%;
+  min-height: 500px;
+  margin: auto;
+  border: 1px dotted grey; }
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 18%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30%;
+  border: 1px dotted grey; }
+
+.settings {
+  justify-content: center;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+  .settings__profile-picture div img {
+    display: block;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0 auto; }
+  .settings__username {
+    display: flex;
+    align-items: center;
+    flex-direction: column; }
+  .settings__username-name {
+    font-size: 1.4rem; }
+  .settings__form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 30rem;
+    margin-top: 3rem auto; }
+  .settings__form Button {
+    margin-top: 2rem;
+    align-self: center;
+    width: 15rem; }
+
+.side-nav {
+  list-style: none;
+  width: 100%; }
+  .side-nav__item {
+    margin-top: 1rem;
+    margin-left: 1rem;
+    height: 3rem;
+    cursor: pointer;
+    transition: all 0.25s; }
+  .side-nav__item:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 3px;
+    background-color: pink;
+    transform: scaleY(0);
+    transition: all 0.2s; }
+  .side-nav__item:active {
+    background-color: yellow; }
+  .side-nav__item:hover {
+    background-color: #e5e2e2; }
+
+.place-form {
+  position: relative;
+  text-align: center;
+  list-style: none;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 90%;
+  max-width: 40rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  background: white; }

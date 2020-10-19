@@ -13,8 +13,6 @@ import {
 import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
-import "./PlaceForm.css";
-// import "../components/PlaceItem.css";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const UpdatePlace = (props) => {
