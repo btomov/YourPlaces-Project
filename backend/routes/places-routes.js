@@ -31,6 +31,8 @@ router.patch(
   placesControllers.updatePlace
 );
 
+router.post("/favourite/:pid", placesControllers.handleFavouritePlace);
+
 router.delete("/:pid", placesControllers.deletePlace);
 
 module.exports = router;

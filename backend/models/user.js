@@ -19,6 +19,7 @@ const userSchema = new Schema({
       ref: "PwChangeRequest",
     },
   ],
+  favouritePlaces: [{ type: String }],
 });
 
 userSchema.plugin(uniqueValidator);

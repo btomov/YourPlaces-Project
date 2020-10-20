@@ -223,8 +223,66 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
+const handleFavouritePlace = async (req, res, next) => {
+  const userId = req.body.userId;
+  const placeId = req.params.pid;
+  console.log(req.body);
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find user.",
+      500,
+      err
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("User not found.", 404);
+    return next(error);
+  }
+
+  if (user.favouritePlaces.includes(placeId)) {
+    //User already has place in favourites, remove it
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      user.favouritePlaces.pull(placeId);
+      await user.save({ session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not delete place.",
+        500
+      );
+      return next(error);
+    }
+  } else {
+    //Else, save place to favourites
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      user.favouritePlaces.push(placeId);
+      await user.save({ session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not add place to favourites.",
+        500,
+        err
+      );
+      return next(error);
+    }
+  }
+
+  res.status(200).json("Favourited place");
+};
+
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUsername = getPlacesByUsername;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
+exports.handleFavouritePlace = handleFavouritePlace;

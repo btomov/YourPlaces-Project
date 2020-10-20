@@ -125,6 +125,7 @@ const signup = async (req, res, next) => {
     places: [],
     temporarytoken,
     resetPasswordRequests: [],
+    favouritePlaces: [],
   });
 
   try {

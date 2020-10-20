@@ -91,7 +91,6 @@ const App = () => {
         draggable
         pauseOnHover
       />
-      ;
       <AuthContext.Provider
         value={{
           isLoggedIn: !!token,

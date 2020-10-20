@@ -9,6 +9,7 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import Icon from "../../shared/components/UIElements/Icon";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -68,6 +69,23 @@ const PlaceItem = (props) => {
     fetchPlace();
   }, [sendRequest, props.id, reloadPlace]);
 
+  const toggleFavouritePlaceHandler = async () => {
+    try {
+      await sendRequest(
+        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
+        "POST",
+        JSON.stringify({
+          userId: auth.userId,
+        }),
+        {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        }
+      );
+      props.onDelete(props.id);
+    } catch (err) {}
+  };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -123,6 +141,13 @@ const PlaceItem = (props) => {
                 <p>{loadedPlace.description}</p>
               </div>
               <div className="place-item__actions">
+                <Icon
+                  onClick={toggleFavouritePlaceHandler}
+                  removeInlineStyle
+                  icon="heart"
+                  className="icon icon-heart"
+                />
+
                 <Button inverse onClick={openMapHandler}>
                   VIEW ON MAP
                 </Button>

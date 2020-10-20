@@ -62,6 +62,8 @@ body {
   .place-item__info p {
     margin: 0 0 0.5rem 0; }
   .place-item__actions {
+    display: flex;
+    justify-content: center;
     padding: 1rem;
     text-align: center;
     border-top: 1px solid #ccc; }
@@ -77,6 +79,14 @@ body {
 @media (min-width: 768px) {
   .place-item__image {
     height: 20rem; } }
+
+.icon {
+  height: 3rem;
+  width: 3rem; }
+  .icon-heart {
+    fill: currentColor; }
+    .icon-heart__active {
+      fill: red; }
 
 .place-list {
   display: flex;
