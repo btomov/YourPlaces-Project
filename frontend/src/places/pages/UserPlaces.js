@@ -9,7 +9,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 const UserPlaces = () => {
   const [loadedPlaces, setLoadedPlaces] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [reloadPlace, setReloadPlace] = useState();
+  // const [reloadPlace, setReloadPlace] = useState();
 
   const username = useParams().username;
 
@@ -24,7 +24,7 @@ const UserPlaces = () => {
       } catch (err) {}
     };
     fetchPlaces();
-  }, [sendRequest, username, reloadPlace]);
+  }, [sendRequest, username]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
@@ -33,11 +33,11 @@ const UserPlaces = () => {
   };
 
   //When we start editing, hide all places that aren't the one we're working on. Questionable function naming
-  const filterNonUpdatingPlacesHandler = (updatingPlaceId) => {
-    setLoadedPlaces((prevPlaces) =>
-      prevPlaces.filter((place) => place.id === updatingPlaceId)
-    );
-  };
+  // const filterNonUpdatingPlacesHandler = (updatingPlaceId) => {
+  //   setLoadedPlaces((prevPlaces) =>
+  //     prevPlaces.filter((place) => place.id === updatingPlaceId)
+  //   );
+  // };
 
   return (
     <React.Fragment>
@@ -49,11 +49,11 @@ const UserPlaces = () => {
       )}
       {!isLoading && loadedPlaces && (
         <PlaceList
-          userId={username}
+          username={username}
           items={loadedPlaces}
           onDeletePlace={placeDeletedHandler}
-          onEditStart={filterNonUpdatingPlacesHandler}
-          onEditEnd={() => setReloadPlace(!reloadPlace)}
+          // onEditStart={filterNonUpdatingPlacesHandler}
+          // onEditEnd={() => setReloadPlace(!reloadPlace)}
         />
       )}
     </React.Fragment>

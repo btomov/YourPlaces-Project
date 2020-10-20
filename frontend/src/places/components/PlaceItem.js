@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
-import UpdatePlace from "../pages/UpdatePlace";
+import React, { useState, useContext } from "react";
+// import UpdatePlace from "../pages/UpdatePlace";
 
-import Card from "../../shared/components/UIElements/Card";
+// import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
@@ -13,7 +13,7 @@ import Icon from "../../shared/components/UIElements/Icon";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [loadedPlace, setLoadedPlace] = useState();
+  const [loadedPlace, setLoadedPlace] = useState(props.place);
   const [reloadPlace, setReloadPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -24,16 +24,16 @@ const PlaceItem = (props) => {
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
 
-  const startEditHandler = (placeId) => {
-    setIsEditing(true);
-    props.onEditStart(placeId);
-  };
+  // const startEditHandler = (placeId) => {
+  //   setIsEditing(true);
+  //   props.onEditStart(placeId);
+  // };
 
-  const stopEditHandler = () => {
-    setIsEditing(false);
-    setReloadPlace(!reloadPlace);
-    props.onEditEnd();
-  };
+  // const stopEditHandler = () => {
+  //   setIsEditing(false);
+  //   setReloadPlace(!reloadPlace);
+  //   props.onEditEnd();
+  // };
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
   };
@@ -57,69 +57,10 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
-  //TODO Need to re-grab the place data after we update it, so we'll be getting everything from the DB instead of through props. Means i won't need most of the props, can delete from placelist
-  useEffect(() => {
-    const fetchPlace = async () => {
-      try {
-        const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/places/${props.id}`
-        );
-        console.log("Re-got");
-        setLoadedPlace(responseData.place);
-      } catch (err) {}
-    };
-    fetchPlace();
-  }, [sendRequest, props.id, reloadPlace]);
-
-  useEffect(() => {
-    const fetchPlace = async () => {
-      try {
-        const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/users/${auth.userId}`
-        );
-        const favPlaces = responseData.user.favouritePlaces;
-        console.log("Re-got users");
-        console.log(favPlaces);
-        for (let i = 1; i < favPlaces.length; i++) {
-          console.log(favPlaces[i].toString());
-          console.log(favPlaces[i].toString() === props.id);
-          if (favPlaces[i].toString() === String(props.id)) {
-            setIsInFavourites(true);
-          }
-          console.log("Props id " + props.id);
-        }
-      } catch (err) {}
-    };
-    fetchPlace();
-  }, [sendRequest, props.id, auth.userId]);
-
-  const toggleFavouritePlaceHandler = async () => {
-    try {
-      const responseData = await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
-        "POST",
-        JSON.stringify({
-          userId: auth.userId,
-          place: loadedPlace,
-        }),
-        {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + auth.token,
-        }
-      );
-      //If it successfully added the thing
-      if (responseData) {
-        setIsInFavourites(true);
-      } else {
-        setIsInFavourites(false);
-      }
-    } catch (err) {}
-  };
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      {loadedPlace && (
+      {props.place && (
         <Modal
           show={showMap}
           onCancel={closeMapHandler}
@@ -175,7 +116,7 @@ const PlaceItem = (props) => {
           {auth.isLoggedIn && (
             <div className="extra content" id="extra-content">
               <Icon
-                onClick={toggleFavouritePlaceHandler}
+                // onClick={}
                 removeInlineStyle
                 icon="heart"
                 className={`icon icon-heart${isInFavourites && "__active"}`}
@@ -183,7 +124,7 @@ const PlaceItem = (props) => {
               {(auth.userId === props.creatorId || auth.isAdmin) && (
                 <div className="extra-content__hidden">
                   <Icon
-                    onClick={startEditHandler}
+                    // onClick={startEditHandler}
                     removeInlineStyle
                     icon="edit"
                     className="icon icon-edit"

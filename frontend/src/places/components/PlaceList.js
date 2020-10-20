@@ -43,7 +43,7 @@ const PlaceList = (props) => {
           onDelete={props.onDeletePlace}
           onEditStart={props.onEditStart}
           onEditEnd={props.onEditEnd}
-          // place={place}
+          place={place}
           // image={place.image}
           // title={place.title}
           // description={place.description}
