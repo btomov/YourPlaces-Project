@@ -64,6 +64,7 @@ const PlaceItem = (props) => {
         const responseData = await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/places/${props.id}`
         );
+        console.log("Re-got");
         setLoadedPlace(responseData.place);
       } catch (err) {}
     };
@@ -84,7 +85,6 @@ const PlaceItem = (props) => {
           Authorization: "Bearer " + auth.token,
         }
       );
-      console.log(responseData);
       //If it successfully added the thing
       if (responseData) {
         setIsInFavourites(true);
@@ -153,11 +153,10 @@ const PlaceItem = (props) => {
           {auth.isLoggedIn && (
             <div className="extra content" id="extra-content">
               <Icon
-                onClick={() => props.favouriteHandler(loadedPlace)}
+                onClick={toggleFavouritePlaceHandler}
                 removeInlineStyle
                 icon="heart"
-                // className={`icon icon-heart${isInFavourites && "__active"}`}
-                className={`icon icon-heart${props.isFavourite && "__active"}`}
+                className={`icon icon-heart${isInFavourites && "__active"}`}
               />
               {(auth.userId === props.creatorId || auth.isAdmin) && (
                 <div className="extra-content__hidden">
