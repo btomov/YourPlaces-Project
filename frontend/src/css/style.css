@@ -81,22 +81,37 @@ body {
     height: 20rem; } }
 
 .icon {
-  height: 3rem;
-  width: 3rem; }
+  height: 2.5rem;
+  width: 2.5rem;
+  cursor: pointer; }
+  .icon:hover {
+    border: 1px solid black; }
   .icon-heart {
-    fill: currentColor; }
+    fill: black; }
     .icon-heart__active {
       fill: red; }
 
 .place-list {
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  justify-content: space-between;
   list-style: none;
-  margin: 1rem auto;
   padding: 0;
   width: 90%;
   max-width: 40rem; }
+
+#custom {
+  margin: 1rem 1rem; }
+
+#custom img {
+  object-fit: cover;
+  max-height: 10rem; }
+
+#extra-content {
+  display: flex;
+  justify-content: flex-end; }
+
+.extra-content__hidden {
+  justify-items: flex-end; }
 
 .avatar {
   display: block;
@@ -454,8 +469,7 @@ main {
   left: 10%;
   width: 80%;
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-  border-radius: 8px; }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26); }
   .modal__header {
     width: 100%;
     padding: 1rem 0.5rem;

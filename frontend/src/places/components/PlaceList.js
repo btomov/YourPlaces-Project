@@ -1,16 +1,49 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
 import Button from "../../shared/components/FormElements/Button";
 // import "./PlaceList.css";
 import { AuthContext } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
+  const [isInFavourites, setIsInFavourites] = useState(false);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [FavPlace, setFavPlace] = useState();
+
+  // const getFavouritedPlace = (place) => {
+  //   setFavPlace(place);
+  // };
+
+  const toggleFavouritePlaceHandler = async (place) => {
+    try {
+      const responseData = await sendRequest(
+        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
+        "POST",
+        JSON.stringify({
+          userId: auth.userId,
+          place,
+        }),
+        {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        }
+      );
+      console.log(responseData);
+      //If it successfully added the thing
+      if (responseData) {
+        setIsInFavourites(true);
+      } else {
+        setIsInFavourites(false);
+      }
+    } catch (err) {}
+  };
 
   let notFoundCard;
-  if (auth.userId === props.userId) {
+  //TODO: This won't work since we now pass props.username
+  if (auth.username === props.username) {
     notFoundCard = (
       <div className="place-list center">
         <Card>
@@ -37,6 +70,8 @@ const PlaceList = (props) => {
       {/* TODO: Delete props i no longer need */}
       {props.items.map((place) => (
         <PlaceItem
+          isFavourite={isInFavourites}
+          favouriteHandler={toggleFavouritePlaceHandler}
           key={place.id}
           id={place.id}
           creatorId={place.creator}

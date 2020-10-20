@@ -11,19 +11,19 @@ const UserPlaces = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [reloadPlace, setReloadPlace] = useState();
 
-  const userId = useParams().userId;
+  const username = useParams().username;
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`
+          `${process.env.REACT_APP_BACKEND_URL}/places/user/${username}`
         );
         setLoadedPlaces(responseData.places);
       } catch (err) {}
     };
     fetchPlaces();
-  }, [sendRequest, userId, reloadPlace]);
+  }, [sendRequest, username, reloadPlace]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
@@ -48,7 +48,7 @@ const UserPlaces = () => {
       )}
       {!isLoading && loadedPlaces && (
         <PlaceList
-          userId={userId}
+          userId={username}
           items={loadedPlaces}
           onDeletePlace={placeDeletedHandler}
           onEditStart={filterNonUpdatingPlacesHandler}

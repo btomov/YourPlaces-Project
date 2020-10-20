@@ -18,6 +18,7 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isInFavourites, setIsInFavourites] = useState(false);
 
   const auth = useContext(AuthContext);
   const openMapHandler = () => setShowMap(true);
@@ -71,18 +72,25 @@ const PlaceItem = (props) => {
 
   const toggleFavouritePlaceHandler = async () => {
     try {
-      await sendRequest(
+      const responseData = await sendRequest(
         process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
         "POST",
         JSON.stringify({
           userId: auth.userId,
+          place: loadedPlace,
         }),
         {
           "Content-Type": "application/json",
           Authorization: "Bearer " + auth.token,
         }
       );
-      props.onDelete(props.id);
+      console.log(responseData);
+      //If it successfully added the thing
+      if (responseData) {
+        setIsInFavourites(true);
+      } else {
+        setIsInFavourites(false);
+      }
     } catch (err) {}
   };
 
@@ -122,60 +130,55 @@ const PlaceItem = (props) => {
           can't be undone thereafter.
         </p>
       </Modal>
-      <li className="place-item">
-        <Card className="place-item__content">
-          {isLoading && <LoadingSpinner asOverlay />}
-
-          {/* Load normal place if we're not editing */}
-          {!isEditing && !isLoading && loadedPlace && (
-            <div>
-              <div className="place-item__image">
-                <img
-                  src={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
-                  alt={loadedPlace.title}
-                />
-              </div>
-              <div className="place-item__info">
-                <h2>{loadedPlace.title}</h2>
-                <h3>{loadedPlace.address}</h3>
-                <p>{loadedPlace.description}</p>
-              </div>
-              <div className="place-item__actions">
-                <Icon
-                  onClick={toggleFavouritePlaceHandler}
-                  removeInlineStyle
-                  icon="heart"
-                  className="icon icon-heart"
-                />
-
-                <Button inverse onClick={openMapHandler}>
-                  VIEW ON MAP
-                </Button>
-                {(auth.userId === props.creatorId || auth.isAdmin) && (
-                  <Button onClick={() => startEditHandler(loadedPlace.id)}>
-                    EDIT
-                  </Button>
-                )}
-
-                {(auth.userId === props.creatorId || auth.isAdmin) && (
-                  <Button danger onClick={showDeleteWarningHandler}>
-                    DELETE
-                  </Button>
-                )}
-              </div>
+      {!isEditing && !isLoading && loadedPlace && (
+        <div id="custom" className="ui card">
+          <div className="image">
+            <img
+              src={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
+              alt={loadedPlace.title}
+            />
+          </div>
+          <div className="content">
+            {/* Potentially change back to a-tag since we want a link */}
+            <div className="header">{loadedPlace.title}</div>
+            <div className="meta">
+              <span className="address">{loadedPlace.address}</span>
+            </div>
+            <div className="description">
+              {loadedPlace.description.length > 30
+                ? loadedPlace.description.substr(0, 30) + "..."
+                : loadedPlace.description}
+            </div>
+          </div>
+          {auth.isLoggedIn && (
+            <div className="extra content" id="extra-content">
+              <Icon
+                onClick={() => props.favouriteHandler(loadedPlace)}
+                removeInlineStyle
+                icon="heart"
+                // className={`icon icon-heart${isInFavourites && "__active"}`}
+                className={`icon icon-heart${props.isFavourite && "__active"}`}
+              />
+              {(auth.userId === props.creatorId || auth.isAdmin) && (
+                <div className="extra-content__hidden">
+                  <Icon
+                    onClick={startEditHandler}
+                    removeInlineStyle
+                    icon="edit"
+                    className="icon icon-edit"
+                  />
+                  <Icon
+                    onClick={showDeleteWarningHandler}
+                    removeInlineStyle
+                    icon="trash"
+                    className="icon icon-trash"
+                  />
+                </div>
+              )}
             </div>
           )}
-          {/* Else, load the same form but with fields that we can edit instead. */}
-          {isEditing && !isLoading && loadedPlace && (
-            <UpdatePlace
-              place={loadedPlace}
-              placeId={props.id}
-              setEditOff={stopEditHandler}
-              image={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
-            />
-          )}
-        </Card>
-      </li>
+        </div>
+      )}
     </React.Fragment>
   );
 };

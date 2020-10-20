@@ -180,7 +180,8 @@ const deletePlace = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not delete place.",
-      500
+      500,
+      err
     );
     return next(error);
   }
@@ -226,10 +227,13 @@ const deletePlace = async (req, res, next) => {
 const handleFavouritePlace = async (req, res, next) => {
   const userId = req.body.userId;
   const placeId = req.params.pid;
-  console.log(req.body);
+  const place = req.body.place;
+  //Will be returned as a response depending on whether we removed or added a place to favourites
+  let addedToFavourites = true;
+
   let user;
   try {
-    user = await User.findById(userId);
+    user = await User.findById(userId).populate("favouritePlaces");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find user.",
@@ -238,15 +242,41 @@ const handleFavouritePlace = async (req, res, next) => {
     );
     return next(error);
   }
-
   if (!user) {
     const error = new HttpError("User not found.", 404);
     return next(error);
   }
 
-  if (user.favouritePlaces.includes(placeId)) {
+  //Check if place is already in favourites
+  let isInArray;
+  if (user.favouritePlaces.length >= 0) {
+    isInArray = user.favouritePlaces.some(function (place) {
+      return place.equals(placeId);
+    });
+  }
+
+  //If its not in the array or if
+  if (!isInArray || user.favouritePlaces.length == 0) {
+    //Else, save place to favourites
+    try {
+      addedToFavourites = true;
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      user.favouritePlaces.push(place);
+      await user.save({ session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      const error = new HttpError(
+        "Something went wrong, could not add place to favourites.",
+        500,
+        err
+      );
+      return next(error);
+    }
+  } else {
     //User already has place in favourites, remove it
     try {
+      addedToFavourites = false;
       const sess = await mongoose.startSession();
       sess.startTransaction();
       user.favouritePlaces.pull(placeId);
@@ -259,25 +289,9 @@ const handleFavouritePlace = async (req, res, next) => {
       );
       return next(error);
     }
-  } else {
-    //Else, save place to favourites
-    try {
-      const sess = await mongoose.startSession();
-      sess.startTransaction();
-      user.favouritePlaces.push(placeId);
-      await user.save({ session: sess });
-      await sess.commitTransaction();
-    } catch (err) {
-      const error = new HttpError(
-        "Something went wrong, could not add place to favourites.",
-        500,
-        err
-      );
-      return next(error);
-    }
   }
 
-  res.status(200).json("Favourited place");
+  res.status(200).json(addedToFavourites);
 };
 
 exports.getPlaceById = getPlaceById;
