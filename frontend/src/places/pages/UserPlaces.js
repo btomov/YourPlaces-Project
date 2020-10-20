@@ -19,6 +19,7 @@ const UserPlaces = () => {
         const responseData = await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/places/user/${username}`
         );
+        console.log("Ping from userplaces");
         setLoadedPlaces(responseData.places);
       } catch (err) {}
     };

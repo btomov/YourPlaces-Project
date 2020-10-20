@@ -71,6 +71,28 @@ const PlaceItem = (props) => {
     fetchPlace();
   }, [sendRequest, props.id, reloadPlace]);
 
+  useEffect(() => {
+    const fetchPlace = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${process.env.REACT_APP_BACKEND_URL}/users/${auth.userId}`
+        );
+        const favPlaces = responseData.user.favouritePlaces;
+        console.log("Re-got users");
+        console.log(favPlaces);
+        for (let i = 1; i < favPlaces.length; i++) {
+          console.log(favPlaces[i].toString());
+          console.log(favPlaces[i].toString() === props.id);
+          if (favPlaces[i].toString() === String(props.id)) {
+            setIsInFavourites(true);
+          }
+          console.log("Props id " + props.id);
+        }
+      } catch (err) {}
+    };
+    fetchPlace();
+  }, [sendRequest, props.id, auth.userId]);
+
   const toggleFavouritePlaceHandler = async () => {
     try {
       const responseData = await sendRequest(

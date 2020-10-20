@@ -249,9 +249,9 @@ const handleFavouritePlace = async (req, res, next) => {
 
   //Check if place is already in favourites
   let isInArray;
-  if (user.favouritePlaces.length >= 0) {
+  if (user.favouritePlaces.length > 0) {
     isInArray = user.favouritePlaces.some(function (place) {
-      return place.equals(placeId);
+      if (place) return place.equals(placeId);
     });
   }
 

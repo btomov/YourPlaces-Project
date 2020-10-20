@@ -10,7 +10,7 @@ const PlaceList = (props) => {
   const auth = useContext(AuthContext);
 
   let notFoundCard;
-  if (auth.userId === props.userId) {
+  if (auth.username === props.username) {
     notFoundCard = (
       <div className="place-list center">
         <Card>
