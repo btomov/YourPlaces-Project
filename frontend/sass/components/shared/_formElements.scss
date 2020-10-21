@@ -76,13 +76,16 @@
 /////////////////////////////////////////////////
 // ImageUpload
 .image-upload {
-  & .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  &_preview {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  // & .center {
+  //   // display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+  //   flex-direction: column;
+  // }
+  &__preview {
     width: 13rem;
     height: 13rem;
     border: 1px solid #ccc;
@@ -93,7 +96,7 @@
     text-align: center;
     margin-bottom: 1rem;
 
-    &--wide {
+    & .wide {
       width: 100%;
     }
     & img {

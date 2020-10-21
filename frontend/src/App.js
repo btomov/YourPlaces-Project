@@ -27,15 +27,7 @@ const ResetPassword = React.lazy(() => import("./user/pages/ResetPassword"));
 const Settings = React.lazy(() => import("./user/pages/Settings"));
 
 const App = () => {
-  const {
-    username,
-    token,
-    login,
-    logout,
-    userId,
-    isAdmin,
-    favPlaces,
-  } = useAuth();
+  const { username, token, login, logout, userId, isAdmin } = useAuth();
   let routes;
 
   if (token) {
@@ -68,7 +60,7 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/:userId/places" exact>
+        <Route path="/:username/places" exact>
           <UserPlaces />
         </Route>
         <Route path="/auth">
@@ -106,7 +98,6 @@ const App = () => {
           token: token,
           userId: userId,
           isAdmin: isAdmin,
-          favPlaces: favPlaces,
           login: login,
           logout: logout,
         }}>
