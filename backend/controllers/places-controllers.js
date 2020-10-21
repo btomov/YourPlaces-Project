@@ -227,13 +227,13 @@ const deletePlace = async (req, res, next) => {
 const handleFavouritePlace = async (req, res, next) => {
   const userId = req.body.userId;
   const placeId = req.params.pid;
-  const place = req.body.place;
+  console.log(placeId);
   //Will be returned as a response depending on whether we removed or added a place to favourites
   let addedToFavourites = true;
 
   let user;
   try {
-    user = await User.findById(userId).populate("favouritePlaces");
+    user = await User.findById(userId);
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find user.",
@@ -248,21 +248,24 @@ const handleFavouritePlace = async (req, res, next) => {
   }
 
   //Check if place is already in favourites
-  let isInArray;
-  if (user.favouritePlaces.length >= 0) {
-    isInArray = user.favouritePlaces.some(function (place) {
-      return place.equals(placeId);
-    });
-  }
+  // let isInArray;
+  // if (user.favouritePlaces.length >= 0) {
+  //   isInArray = user.favouritePlaces.some(function (place) {
+  //     return place.equals(placeId);
+  //   });
+  // }
 
   //If its not in the array or if
-  if (!isInArray || user.favouritePlaces.length == 0) {
+  if (
+    user.favouritePlaces.length == 0 ||
+    !user.favouritePlaces.includes(placeId)
+  ) {
     //Else, save place to favourites
     try {
       addedToFavourites = true;
       const sess = await mongoose.startSession();
       sess.startTransaction();
-      user.favouritePlaces.push(place);
+      user.favouritePlaces.push(placeId);
       await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
@@ -284,14 +287,14 @@ const handleFavouritePlace = async (req, res, next) => {
       await sess.commitTransaction();
     } catch (err) {
       const error = new HttpError(
-        "Something went wrong, could not delete place.",
+        "Something went wrong, could not remove place from favourites.",
         500
       );
       return next(error);
     }
   }
 
-  res.status(200).json(addedToFavourites);
+  res.status(200).json({ addedToFavourites, favPlaces: user.favouritePlaces });
 };
 
 exports.getPlaceById = getPlaceById;

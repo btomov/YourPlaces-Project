@@ -185,6 +185,8 @@ const signup = async (req, res, next) => {
     .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
+///////////////////////////////////////////
+//LOGIN
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -256,6 +258,7 @@ const login = async (req, res, next) => {
     email: existingUser.email,
     token: token,
     isAdmin: existingUser.isAdmin,
+    favouritePlaces: existingUser.favouritePlaces,
   });
 };
 

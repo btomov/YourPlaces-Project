@@ -27,7 +27,15 @@ const ResetPassword = React.lazy(() => import("./user/pages/ResetPassword"));
 const Settings = React.lazy(() => import("./user/pages/Settings"));
 
 const App = () => {
-  const { username, token, login, logout, userId, isAdmin } = useAuth();
+  const {
+    username,
+    token,
+    login,
+    logout,
+    userId,
+    isAdmin,
+    favPlaces,
+  } = useAuth();
   let routes;
 
   if (token) {
@@ -98,6 +106,7 @@ const App = () => {
           token: token,
           userId: userId,
           isAdmin: isAdmin,
+          favPlaces: favPlaces,
           login: login,
           logout: logout,
         }}>

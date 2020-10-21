@@ -9,6 +9,7 @@ export const useAuth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState();
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
+  // const [favPlaces, setFavPlaces] = useState();
   //const { sendRequest } = useHttpClient();
 
   const login = useCallback((username, uid, token, isAdmin, expirationDate) => {
@@ -20,6 +21,7 @@ export const useAuth = () => {
     const tokenExpirationDate =
       expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
     setTokenExpirationDate(tokenExpirationDate);
+    // localStorage.setItem("favouritePlaces", JSON.stringify(favPlaces));
     localStorage.setItem(
       "userData",
       JSON.stringify({
@@ -39,6 +41,7 @@ export const useAuth = () => {
     setUsername(null);
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
+    localStorage.removeItem("favouritePlaces");
   }, []);
 
   useEffect(() => {

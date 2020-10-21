@@ -84,6 +84,11 @@ const Auth = () => {
           }
         );
         console.log(responseData);
+        localStorage.setItem(
+          "favouritePlaces",
+          JSON.stringify(responseData.favouritePlaces) || []
+        );
+
         auth.login(
           responseData.username,
           responseData.userId,

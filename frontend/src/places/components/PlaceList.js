@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
@@ -11,33 +11,64 @@ const PlaceList = (props) => {
   const auth = useContext(AuthContext);
   const [isInFavourites, setIsInFavourites] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [FavPlace, setFavPlace] = useState();
+  const [favPlaces, setFavPlaces] = useState();
 
   // const getFavouritedPlace = (place) => {
   //   setFavPlace(place);
   // };
 
-  const toggleFavouritePlaceHandler = async (place) => {
+  useEffect(() => {
+    // const favs = localStorage.getItem("favouritePlaces");
+    setFavPlaces(JSON.parse(localStorage.getItem("favouritePlaces")) || []);
+    // const fetchPlaces = async () => {
+    //   try {
+    //     const responseData = await sendRequest(
+    //       `${process.env.REACT_APP_BACKEND_URL}/user/${auth.userId}`
+    //     );
+    //     console.log(responseData);
+    //     setFavPlaces(responseData.user.favPlaces);
+    //     const favs = localStorage.getItem("favouritePlaces");
+    //     console.log(favs);
+    //   } catch (err) {}
+    // };
+    // fetchPlaces();
+    // console.log(auth.favouritePlaces);
+  }, []);
+
+  // Object.keys(favs).forEach(function (key) {
+  //   console.log(favs.getItem(key));
+  // });
+
+  const toggleFavouritePlaceHandler = async (placeId) => {
     try {
       const responseData = await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
+        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${placeId}`,
         "POST",
         JSON.stringify({
           userId: auth.userId,
-          place,
+          placeId,
         }),
         {
           "Content-Type": "application/json",
           Authorization: "Bearer " + auth.token,
         }
       );
-      console.log(responseData);
       //If it successfully added the thing
-      if (responseData) {
+      if (responseData.addedToFavourites) {
         setIsInFavourites(true);
+        //Get array, push new place into it, save back into localstorage
+        let oldFavPlaces =
+          JSON.parse(localStorage.getItem("favouritePlaces")) || [];
+        oldFavPlaces.push(placeId);
+        localStorage.setItem("favouritePlaces", JSON.stringify(oldFavPlaces));
       } else {
         setIsInFavourites(false);
+        let oldFavPlaces =
+          JSON.parse(localStorage.getItem("favouritePlaces")) || [];
+        oldFavPlaces.splice(oldFavPlaces.indexOf(placeId.toString()), 1);
+        localStorage.setItem("favouritePlaces", JSON.stringify(oldFavPlaces));
       }
+      setFavPlaces(JSON.parse(localStorage.getItem("favouritePlaces")) || []);
     } catch (err) {}
   };
 
@@ -68,24 +99,25 @@ const PlaceList = (props) => {
   return (
     <ul className="place-list">
       {/* TODO: Delete props i no longer need */}
-      {props.items.map((place) => (
-        <PlaceItem
-          isFavourite={isInFavourites}
-          favouriteHandler={toggleFavouritePlaceHandler}
-          key={place.id}
-          id={place.id}
-          creatorId={place.creator}
-          onDelete={props.onDeletePlace}
-          onEditStart={props.onEditStart}
-          onEditEnd={props.onEditEnd}
-          // place={place}
-          // image={place.image}
-          // title={place.title}
-          // description={place.description}
-          // address={place.address}
-          // coordinates={place.location}
-        />
-      ))}
+      {favPlaces &&
+        props.items.map((place) => (
+          <PlaceItem
+            isFavourite={favPlaces.includes(place.id) ? true : false}
+            favouriteHandler={toggleFavouritePlaceHandler}
+            key={place.id}
+            id={place.id}
+            creatorId={place.creator}
+            onDelete={props.onDeletePlace}
+            onEditStart={props.onEditStart}
+            onEditEnd={props.onEditEnd}
+            place={place}
+            // image={place.image}
+            // title={place.title}
+            // description={place.description}
+            // address={place.address}
+            // coordinates={place.location}
+          />
+        ))}
     </ul>
   );
 };

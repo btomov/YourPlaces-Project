@@ -13,7 +13,7 @@ import Icon from "../../shared/components/UIElements/Icon";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [loadedPlace, setLoadedPlace] = useState();
+  const [loadedPlace, setLoadedPlace] = useState(props.place);
   const [reloadPlace, setReloadPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -54,43 +54,6 @@ const PlaceItem = (props) => {
         }
       );
       props.onDelete(props.id);
-    } catch (err) {}
-  };
-
-  //TODO Need to re-grab the place data after we update it, so we'll be getting everything from the DB instead of through props. Means i won't need most of the props, can delete from placelist
-  useEffect(() => {
-    const fetchPlace = async () => {
-      try {
-        const responseData = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/places/${props.id}`
-        );
-        setLoadedPlace(responseData.place);
-      } catch (err) {}
-    };
-    fetchPlace();
-  }, [sendRequest, props.id, reloadPlace]);
-
-  const toggleFavouritePlaceHandler = async () => {
-    try {
-      const responseData = await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + `/places/favourite/${props.id}`,
-        "POST",
-        JSON.stringify({
-          userId: auth.userId,
-          place: loadedPlace,
-        }),
-        {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + auth.token,
-        }
-      );
-      console.log(responseData);
-      //If it successfully added the thing
-      if (responseData) {
-        setIsInFavourites(true);
-      } else {
-        setIsInFavourites(false);
-      }
     } catch (err) {}
   };
 
@@ -153,7 +116,7 @@ const PlaceItem = (props) => {
           {auth.isLoggedIn && (
             <div className="extra content" id="extra-content">
               <Icon
-                onClick={() => props.favouriteHandler(loadedPlace)}
+                onClick={() => props.favouriteHandler(loadedPlace.id)}
                 removeInlineStyle
                 icon="heart"
                 // className={`icon icon-heart${isInFavourites && "__active"}`}
