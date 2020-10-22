@@ -9,44 +9,22 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
-  const [isInFavourites, setIsInFavourites] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [favPlaces, setFavPlaces] = useState();
 
-  // const getFavouritedPlace = (place) => {
-  //   setFavPlace(place);
-  // };
-
   useEffect(() => {
-    // const favs = localStorage.getItem("favouritePlaces");
     setFavPlaces(JSON.parse(localStorage.getItem("favouritePlaces")) || []);
-    // const fetchPlaces = async () => {
-    //   try {
-    //     const responseData = await sendRequest(
-    //       `${process.env.REACT_APP_BACKEND_URL}/user/${auth.userId}`
-    //     );
-    //     console.log(responseData);
-    //     setFavPlaces(responseData.user.favPlaces);
-    //     const favs = localStorage.getItem("favouritePlaces");
-    //     console.log(favs);
-    //   } catch (err) {}
-    // };
-    // fetchPlaces();
-    // console.log(auth.favouritePlaces);
   }, []);
 
-  // Object.keys(favs).forEach(function (key) {
-  //   console.log(favs.getItem(key));
-  // });
-
-  const toggleFavouritePlaceHandler = async (placeId) => {
+  const toggleFavouritePlaceHandler = async (place) => {
+    let placeId = place.id;
     try {
       const responseData = await sendRequest(
         process.env.REACT_APP_BACKEND_URL + `/places/favourite/${placeId}`,
         "POST",
         JSON.stringify({
           userId: auth.userId,
-          placeId,
+          place,
         }),
         {
           "Content-Type": "application/json",
@@ -55,14 +33,13 @@ const PlaceList = (props) => {
       );
       //If it successfully added the thing
       if (responseData.addedToFavourites) {
-        setIsInFavourites(true);
+        // setIsInFavourites(true);
         //Get array, push new place into it, save back into localstorage
         let oldFavPlaces =
           JSON.parse(localStorage.getItem("favouritePlaces")) || [];
         oldFavPlaces.push(placeId);
         localStorage.setItem("favouritePlaces", JSON.stringify(oldFavPlaces));
       } else {
-        setIsInFavourites(false);
         let oldFavPlaces =
           JSON.parse(localStorage.getItem("favouritePlaces")) || [];
         oldFavPlaces.splice(oldFavPlaces.indexOf(placeId.toString()), 1);

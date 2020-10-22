@@ -116,7 +116,7 @@ const PlaceItem = (props) => {
           {auth.isLoggedIn && (
             <div className="extra content" id="extra-content">
               <Icon
-                onClick={() => props.favouriteHandler(loadedPlace.id)}
+                onClick={() => props.favouriteHandler(loadedPlace)}
                 removeInlineStyle
                 icon="heart"
                 // className={`icon icon-heart${isInFavourites && "__active"}`}

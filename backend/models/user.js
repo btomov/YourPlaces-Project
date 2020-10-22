@@ -19,7 +19,9 @@ const userSchema = new Schema({
       ref: "PwChangeRequest",
     },
   ],
-  favouritePlaces: [{ type: String }],
+  favouritePlaces: [
+    { type: mongoose.Types.ObjectId, required: true, ref: "Place" },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);

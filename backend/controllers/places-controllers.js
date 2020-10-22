@@ -34,11 +34,13 @@ const getPlaceById = async (req, res, next) => {
 
 const getPlacesByUsername = async (req, res, next) => {
   const username = new RegExp(`^${req.params.username}$`, "i");
+  const findFavourites = req.body.findFavourites;
   // let places;
   let userWithPlaces;
   try {
     userWithPlaces = await User.findOne({ username: username }).populate(
-      "places"
+      findFavourites ? "favouritePlaces" : "places"
+      // "favouritePlaces"
     );
   } catch (err) {
     const error = new HttpError(
@@ -52,14 +54,23 @@ const getPlacesByUsername = async (req, res, next) => {
       new HttpError("Could not find places for the provided user id.", 404)
     );
   }
-
-  res.json({
-    places: userWithPlaces.places.map((place) =>
-      place.toObject({ getters: true })
-    ),
-  });
+  console.log(userWithPlaces);
+  if (!findFavourites) {
+    res.json({
+      places: userWithPlaces.places.map((place) =>
+        place.toObject({ getters: true })
+      ),
+    });
+  } else {
+    res.json({
+      favouritePlaces: userWithPlaces.favouritePlaces.map((place) =>
+        place.toObject({ getters: true })
+      ),
+    });
+  }
 };
-
+////////////////////////////////////////////////////////
+//Created Place
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -227,13 +238,14 @@ const deletePlace = async (req, res, next) => {
 const handleFavouritePlace = async (req, res, next) => {
   const userId = req.body.userId;
   const placeId = req.params.pid;
+  const place = req.body.place;
   console.log(placeId);
   //Will be returned as a response depending on whether we removed or added a place to favourites
   let addedToFavourites = true;
 
   let user;
   try {
-    user = await User.findById(userId);
+    user = await User.findById(userId).populate("favouritePlaces");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find user.",
@@ -248,24 +260,21 @@ const handleFavouritePlace = async (req, res, next) => {
   }
 
   //Check if place is already in favourites
-  // let isInArray;
-  // if (user.favouritePlaces.length >= 0) {
-  //   isInArray = user.favouritePlaces.some(function (place) {
-  //     return place.equals(placeId);
-  //   });
-  // }
+  let isInArray;
+  if (user.favouritePlaces.length >= 0) {
+    isInArray = user.favouritePlaces.some(function (place) {
+      return place.equals(placeId);
+    });
+  }
 
   //If its not in the array or if
-  if (
-    user.favouritePlaces.length == 0 ||
-    !user.favouritePlaces.includes(placeId)
-  ) {
+  if (user.favouritePlaces.length == 0 || !isInArray) {
     //Else, save place to favourites
     try {
       addedToFavourites = true;
       const sess = await mongoose.startSession();
       sess.startTransaction();
-      user.favouritePlaces.push(placeId);
+      user.favouritePlaces.push(place);
       await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
@@ -282,7 +291,7 @@ const handleFavouritePlace = async (req, res, next) => {
       addedToFavourites = false;
       const sess = await mongoose.startSession();
       sess.startTransaction();
-      user.favouritePlaces.pull(placeId);
+      user.favouritePlaces.pull(place);
       await user.save({ session: sess });
       await sess.commitTransaction();
     } catch (err) {
@@ -293,7 +302,7 @@ const handleFavouritePlace = async (req, res, next) => {
       return next(error);
     }
   }
-
+  console.log(user);
   res.status(200).json({ addedToFavourites, favPlaces: user.favouritePlaces });
 };
 

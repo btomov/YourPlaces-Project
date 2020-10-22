@@ -93,7 +93,6 @@ body {
 
 .place-list {
   display: flex;
-  justify-content: space-between;
   list-style: none;
   padding: 0;
   width: 90%;
