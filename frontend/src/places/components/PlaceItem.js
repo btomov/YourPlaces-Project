@@ -10,6 +10,7 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import Icon from "../../shared/components/UIElements/Icon";
+import PlaceItemFullView from "./PlaceItemFullView";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -17,8 +18,10 @@ const PlaceItem = (props) => {
   const [reloadPlace, setReloadPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const [isEditing, setIsEditing] = useState(false);
-  const [isInFavourites, setIsInFavourites] = useState(false);
+
+  const [viewFullPlace, setViewFullPlace] = useState(false);
 
   const auth = useContext(AuthContext);
   const openMapHandler = () => setShowMap(true);
@@ -26,13 +29,13 @@ const PlaceItem = (props) => {
 
   const startEditHandler = (placeId) => {
     setIsEditing(true);
-    props.onEditStart(placeId);
+    // props.onEditStart(placeId);
   };
 
   const stopEditHandler = () => {
     setIsEditing(false);
     setReloadPlace(!reloadPlace);
-    props.onEditEnd();
+    // props.onEditEnd();
   };
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -93,7 +96,32 @@ const PlaceItem = (props) => {
           can't be undone thereafter.
         </p>
       </Modal>
-      {!isEditing && !isLoading && loadedPlace && (
+      {/* Edit Modal */}
+      <Modal
+        show={isEditing}
+        onCancel={stopEditHandler}
+        header={`Editing ${loadedPlace.title}`}
+        footerClass="place-item__modal-actions"
+        footer={
+          <React.Fragment>
+            <Button inverse onClick={cancelDeleteHandler}>
+              CANCEL
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              DELETE
+            </Button>
+          </React.Fragment>
+        }>
+        <UpdatePlace place={props.place} />
+      </Modal>
+      {/* Full view modal */}
+      <Modal
+        show={viewFullPlace}
+        onCancel={() => setViewFullPlace(false)}
+        header={`Viewing ${loadedPlace.title}`}>
+        <PlaceItemFullView place={props.place} />
+      </Modal>
+      {!isLoading && loadedPlace && (
         <div id="custom" className="ui card">
           <div className="image">
             <img
@@ -113,8 +141,16 @@ const PlaceItem = (props) => {
                 : loadedPlace.description}
             </div>
           </div>
-          {auth.isLoggedIn && (
-            <div className="extra content" id="extra-content">
+
+          <div className="extra content" id="extra-content">
+            <Icon
+              onClick={() => setViewFullPlace(true)}
+              removeInlineStyle
+              icon="eye"
+              className="icon icon-eye"
+            />
+
+            {auth.isLoggedIn && (
               <Icon
                 onClick={() => props.favouriteHandler(loadedPlace)}
                 removeInlineStyle
@@ -122,24 +158,24 @@ const PlaceItem = (props) => {
                 // className={`icon icon-heart${isInFavourites && "__active"}`}
                 className={`icon icon-heart${props.isFavourite && "__active"}`}
               />
-              {(auth.userId === props.creatorId || auth.isAdmin) && (
-                <div className="extra-content__hidden">
-                  <Icon
-                    onClick={startEditHandler}
-                    removeInlineStyle
-                    icon="edit"
-                    className="icon icon-edit"
-                  />
-                  <Icon
-                    onClick={showDeleteWarningHandler}
-                    removeInlineStyle
-                    icon="trash"
-                    className="icon icon-trash"
-                  />
-                </div>
-              )}
-            </div>
-          )}
+            )}
+            {(auth.userId === props.creatorId || auth.isAdmin) && (
+              <div className="extra-content__hidden">
+                <Icon
+                  onClick={startEditHandler}
+                  removeInlineStyle
+                  icon="edit"
+                  className="icon icon-edit"
+                />
+                <Icon
+                  onClick={showDeleteWarningHandler}
+                  removeInlineStyle
+                  icon="trash"
+                  className="icon icon-trash"
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </React.Fragment>

@@ -99,7 +99,8 @@ body {
   max-width: 40rem; }
 
 #custom {
-  margin: 1rem 1rem; }
+  margin: 1rem 1rem;
+  min-width: 13rem; }
 
 #custom img {
   object-fit: cover;
@@ -462,7 +463,6 @@ main {
 .modal {
   z-index: 100;
   position: fixed;
-  top: 22vh;
   left: 10%;
   width: 80%;
   background: white;

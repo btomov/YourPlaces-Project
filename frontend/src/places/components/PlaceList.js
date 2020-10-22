@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-
+import Modal from "../../shared/components/UIElements/Modal";
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
 import Button from "../../shared/components/FormElements/Button";
 // import "./PlaceList.css";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import UpdatePlace from "../pages/UpdatePlace";
 
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
@@ -50,7 +51,6 @@ const PlaceList = (props) => {
   };
 
   let notFoundCard;
-  //TODO: This won't work since we now pass props.username
   if (auth.username === props.username) {
     notFoundCard = (
       <div className="place-list center">
@@ -75,7 +75,6 @@ const PlaceList = (props) => {
 
   return (
     <ul className="place-list">
-      {/* TODO: Delete props i no longer need */}
       {favPlaces &&
         props.items.map((place) => (
           <PlaceItem
@@ -85,6 +84,8 @@ const PlaceList = (props) => {
             id={place.id}
             creatorId={place.creator}
             onDelete={props.onDeletePlace}
+            // openFullView={() => setViewFullPlace(true)}
+            //Оn edit start,
             onEditStart={props.onEditStart}
             onEditEnd={props.onEditEnd}
             place={place}
