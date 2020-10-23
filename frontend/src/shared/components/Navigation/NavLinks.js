@@ -59,11 +59,11 @@ const NavLinks = (props) => {
           />
         </div>
       )}
-      {auth.isLoggedIn && (
+      {/* {auth.isLoggedIn && (
         <li>
           <button onClick={() => auth.logout()}>LOGOUT</button>
         </li>
-      )}
+      )} */}
     </ul>
   );
 };

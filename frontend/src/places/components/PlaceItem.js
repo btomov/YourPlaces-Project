@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import UpdatePlace from "../pages/UpdatePlace";
 
-import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
@@ -14,7 +13,6 @@ import PlaceItemFullView from "./PlaceItemFullView";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [loadedPlace, setLoadedPlace] = useState(props.place);
   const [reloadPlace, setReloadPlace] = useState();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -49,30 +47,31 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + `/places/${props.id}`,
+        process.env.REACT_APP_BACKEND_URL + `/places/${props.place.id}`,
         "DELETE",
         null,
         {
           Authorization: "Bearer " + auth.token,
         }
       );
-      props.onDelete(props.id);
+      props.onDelete(props.place.id);
     } catch (err) {}
   };
 
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      {loadedPlace && (
+      {isLoading && <LoadingSpinner />}
+      {props.place && (
         <Modal
           show={showMap}
           onCancel={closeMapHandler}
-          header={loadedPlace.address}
+          header={props.place.address}
           contentClass="place-item__modal-content"
           footerClass="place-item__modal-actions"
           footer={<Button onClick={closeMapHandler}>CLOSE</Button>}>
           <div className="map-container">
-            <Map center={loadedPlace.coordinates} zoom={16} />
+            <Map center={props.place.coordinates} zoom={16} />
           </div>
         </Modal>
       )}
@@ -100,7 +99,7 @@ const PlaceItem = (props) => {
       <Modal
         show={isEditing}
         onCancel={stopEditHandler}
-        header={`Editing ${loadedPlace.title}`}
+        header={`Editing ${props.place.title}`}
         footerClass="place-item__modal-actions"
         footer={
           <React.Fragment>
@@ -118,27 +117,27 @@ const PlaceItem = (props) => {
       <Modal
         show={viewFullPlace}
         onCancel={() => setViewFullPlace(false)}
-        header={`Viewing ${loadedPlace.title}`}>
+        header={`Viewing ${props.place.title}`}>
         <PlaceItemFullView place={props.place} />
       </Modal>
-      {!isLoading && loadedPlace && (
+      {!isLoading && props.place && (
         <div id="custom" className="ui card">
           <div className="image">
             <img
-              src={`${process.env.REACT_APP_ASSET_URL}/${loadedPlace.image}`}
-              alt={loadedPlace.title}
+              src={`${process.env.REACT_APP_ASSET_URL}/${props.place.image}`}
+              alt={props.place.title}
             />
           </div>
           <div className="content">
             {/* Potentially change back to a-tag since we want a link */}
-            <div className="header">{loadedPlace.title}</div>
+            <div className="header">{props.place.title}</div>
             <div className="meta">
-              <span className="address">{loadedPlace.address}</span>
+              <span className="address">{props.place.address}</span>
             </div>
             <div className="description">
-              {loadedPlace.description.length > 30
-                ? loadedPlace.description.substr(0, 30) + "..."
-                : loadedPlace.description}
+              {props.place.description.length > 30
+                ? props.place.description.substr(0, 30) + "..."
+                : props.place.description}
             </div>
           </div>
 
@@ -152,14 +151,14 @@ const PlaceItem = (props) => {
 
             {auth.isLoggedIn && (
               <Icon
-                onClick={() => props.favouriteHandler(loadedPlace)}
+                onClick={() => props.favouriteHandler(props.place)}
                 removeInlineStyle
                 icon="heart"
                 // className={`icon icon-heart${isInFavourites && "__active"}`}
                 className={`icon icon-heart${props.isFavourite && "__active"}`}
               />
             )}
-            {(auth.userId === props.creatorId || auth.isAdmin) && (
+            {(auth.userId === props.place.creator || auth.isAdmin) && (
               <div className="extra-content__hidden">
                 <Icon
                   onClick={startEditHandler}

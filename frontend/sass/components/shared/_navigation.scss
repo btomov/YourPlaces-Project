@@ -45,15 +45,17 @@ main {
     background: black;
   }
 
-  &__title {
-    color: black;
-  }
+  // &__title {
+  //   color: black;
+  // }
 
-  &__title a {
-    text-decoration: none;
-    color: rgb(0, 0, 0);
+  // &__title a {
+  //   text-decoration: none;
+  //   color: rgb(0, 0, 0);
+  // }
+  &__logo {
+    height: 7rem;
   }
-
   &__header-nav {
     display: none;
   }
