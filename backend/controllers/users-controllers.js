@@ -211,7 +211,7 @@ const login = async (req, res, next) => {
   }
 
   if (!existingUser.isConfirmed) {
-    const error = new HttpError("You need to confirm your email first", 403);
+    const error = new HttpError("You need to confirm your email first.", 403);
     return next(error);
   }
 

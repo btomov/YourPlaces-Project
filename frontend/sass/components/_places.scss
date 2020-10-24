@@ -79,17 +79,24 @@
   display: flex;
   // justify-content: space-between;
   // flex-direction: column;
-  // flex-wrap: wrap;
+  flex-wrap: wrap;
   list-style: none;
   // margin: 1rem auto;
   padding: 0;
   width: 90%;
-  max-width: 40rem;
+  // max-width: 40rem;
 }
 
 #custom {
+  //Place card
   margin: 1rem 1rem;
   min-width: 13rem;
+  @media only screen and (max-width: 708px) {
+    & {
+      width: 90%;
+      margin: 3rem auto;
+    }
+  }
 }
 
 #custom img {
