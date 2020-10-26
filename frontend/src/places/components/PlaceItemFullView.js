@@ -7,10 +7,7 @@ const PlaceItem = (props) => {
       <div className="place-item">
         <Card className="place-item__content">
           <div className="place-item__image">
-            <img
-              src={`${process.env.REACT_APP_ASSET_URL}/${props.place.image}`}
-              alt={props.place.title}
-            />
+            <img src={`${props.place.image}`} alt={props.place.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.place.title}</h2>

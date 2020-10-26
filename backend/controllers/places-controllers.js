@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const AWS = require("aws-sdk");
 
 const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
@@ -93,7 +94,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: req.file.path,
+    image: req.file.location,
     creator: req.userData.userId,
   });
 
@@ -166,7 +167,7 @@ const updatePlace = async (req, res, next) => {
     fs.unlink(place.image, (err) => {
       console.log(err);
     });
-    place.image = req.file.path;
+    place.image = req.file.location;
   }
 
   try {

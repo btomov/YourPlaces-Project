@@ -72,7 +72,7 @@ const UserItem = (props) => {
             <div className="user-item__image">
               <Avatar
                 class="avatar"
-                image={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
+                image={`${props.image}`}
                 alt={props.username}
               />
             </div>

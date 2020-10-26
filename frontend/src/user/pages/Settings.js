@@ -164,7 +164,7 @@ const Settings = (props) => {
                   isAvatar
                   buttonText={"Change Profile Picture"}
                   onInput={inputHandler}
-                  image={`${process.env.REACT_APP_ASSET_URL}/${userData.image}`}
+                  image={`${userData.image}`}
                 />
                 <span className="settings__username-name">
                   {userData.username}

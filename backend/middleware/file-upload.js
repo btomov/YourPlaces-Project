@@ -1,34 +1,56 @@
+const AWS = require("aws-sdk");
 const multer = require("multer");
-const uuid = require("uuid/v1");
+const multerS3 = require("multer-s3");
 
-const MIME_TYPE_MAP = {
-  "image/png": "png",
-  "image/jpeg": "jpeg",
-  "image/jpg": "jpg",
+const s3Config = new AWS.S3({
+  accessKeyId: `${process.env.AWS_ACCESS_KEY_ID}`,
+  secretAccessKey: `${process.env.AWS_SECRET_ACCESS_KEY}`,
+  Bucket: "your-places",
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
 };
 
-const fileUpload = multer({
-  limits: 500000,
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      //Easy way to check if its a place or a user
-      console.log(req.body);
-      if (req.body.address) {
-        cb(null, "uploads/images/places");
-      } else {
-        cb(null, "uploads/images/users");
-      }
-    },
-    filename: (req, file, cb) => {
-      const ext = MIME_TYPE_MAP[file.mimetype];
-      cb(null, uuid() + "." + ext);
-    },
-  }),
-  fileFilter: (req, file, cb) => {
-    const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error("Invalid mime type!");
-    cb(error, isValid);
+// this is just to test locally if multer is working fine.
+const storage = multer.diskStorage({
+  destination: (req, res, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
   },
 });
 
-module.exports = fileUpload;
+const multerS3Config = multerS3({
+  s3: s3Config,
+  bucket: "your-places",
+  ACL: "public-read",
+
+  metadata: function (req, file, cb) {
+    cb(null, { fieldName: file.fieldname });
+  },
+  key: function (req, file, cb) {
+    console.log(file);
+    let newFileName = new Date().toISOString() + "-" + file.originalname;
+    let fullPath =
+      "uploads/images/" +
+      (req.body.address ? "places/" : "users/") +
+      newFileName;
+    cb(null, fullPath);
+  },
+});
+
+const upload = multer({
+  storage: multerS3Config,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 1024 * 1024 * 5, // we are allowing only 5 MB files
+  },
+});
+
+exports.fileUpload = upload;
