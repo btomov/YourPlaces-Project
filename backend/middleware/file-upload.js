@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 const multerS3Config = multerS3({
   s3: s3Config,
   bucket: "your-places",
-  ACL: "public-read",
+  acl: "public-read",
 
   metadata: function (req, file, cb) {
     cb(null, { fieldName: file.fieldname });
