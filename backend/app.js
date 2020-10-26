@@ -13,7 +13,33 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/uploads/images", express.static(path.join("uploads", "images")));
+// app.use("/uploads/images", express.static(path.join("uploads", "images")));
+
+app.get("/sign-s3", (req, res) => {
+  const s3 = new aws.S3();
+  const fileName = req.query["file-name"];
+  const fileType = req.query["file-type"];
+  const s3Params = {
+    Bucket: "your-places",
+    Key: fileName,
+    Expires: 60,
+    ContentType: fileType,
+    ACL: "public-read",
+  };
+
+  s3.getSignedUrl("putObject", s3Params, (err, data) => {
+    if (err) {
+      console.log(err);
+      return res.end();
+    }
+    const returnData = {
+      signedRequest: data,
+      url: `https://your-places.s3.amazonaws.com/${fileName}`,
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

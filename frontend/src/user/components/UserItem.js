@@ -72,6 +72,7 @@ const UserItem = (props) => {
             <div className="user-item__image">
               <Avatar
                 class="avatar"
+                //Needs to be changed to grab from AWS
                 image={`${process.env.REACT_APP_ASSET_URL}/${props.image}`}
                 alt={props.username}
               />

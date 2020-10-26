@@ -58,7 +58,7 @@ const Auth = () => {
           },
           image: {
             value: null,
-            isValid: false,
+            isValid: true,
           },
         },
         false
@@ -157,6 +157,7 @@ const Auth = () => {
               id="image"
               onInput={inputHandler}
               errorText="Please provide an image."
+              initialValid={true}
             />
           )}
           {!isRestoringPassword && (
