@@ -82,11 +82,16 @@ const UserItem = (props) => {
                 {props.placeCount} {props.placeCount === 1 ? "Place" : "Places"}
               </h3>
             </div>
-            {auth.isAdmin && auth.isLoggedIn && (
-              <Button danger onClick={showDeleteWarningHandler}>
-                DELETE USER
-              </Button>
-            )}
+            {auth.isAdmin &&
+              auth.isLoggedIn &&
+              props.username !== auth.username && (
+                <Button
+                  className="user-item__delete"
+                  danger
+                  onClick={showDeleteWarningHandler}>
+                  DELETE USER
+                </Button>
+              )}
           </Link>
         </Card>
       </li>

@@ -240,7 +240,7 @@ const handleFavouritePlace = async (req, res, next) => {
   const userId = req.body.userId;
   const placeId = req.params.pid;
   const place = req.body.place;
-  console.log(placeId);
+  // console.log(placeId);
   //Will be returned as a response depending on whether we removed or added a place to favourites
   let addedToFavourites = true;
 
@@ -303,7 +303,7 @@ const handleFavouritePlace = async (req, res, next) => {
       return next(error);
     }
   }
-  console.log(user);
+  // console.log(user);
   res.status(200).json({ addedToFavourites, favPlaces: user.favouritePlaces });
 };
 

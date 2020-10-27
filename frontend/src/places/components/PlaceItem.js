@@ -21,7 +21,8 @@ const PlaceItem = (props) => {
   const [viewFullPlace, setViewFullPlace] = useState(false);
 
   const auth = useContext(AuthContext);
-  const openMapHandler = () => setShowMap(true);
+  //TODO: FIX.
+  // const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
 
   const startEditHandler = (placeId) => {

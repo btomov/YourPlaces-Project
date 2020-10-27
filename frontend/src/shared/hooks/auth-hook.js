@@ -13,7 +13,6 @@ export const useAuth = () => {
   //const { sendRequest } = useHttpClient();
 
   const login = useCallback((username, uid, token, isAdmin, expirationDate) => {
-    console.log("From auth-hook " + username);
     setToken(token);
     setUserId(uid);
     setUsername(username);
@@ -61,7 +60,6 @@ export const useAuth = () => {
       storedData.token &&
       new Date(storedData.expiration) > new Date()
     ) {
-      console.log(storedData);
       login(
         storedData.username,
         storedData.userId,

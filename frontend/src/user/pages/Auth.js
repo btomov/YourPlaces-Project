@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.min.css";
 
 import { useHistory } from "react-router-dom";
@@ -38,7 +38,15 @@ const Auth = () => {
     false
   );
 
+  useEffect(() => {
+    toast.info(
+      "You can login with a dummy account using 'admin@gmail.com/admin1' as email/password if you want to look around!",
+      { autoClose: 20000 }
+    );
+  }, []);
+
   const switchModeHandler = () => {
+    toast.dismiss();
     if (!isLoginMode) {
       setFormData(
         {
@@ -69,6 +77,7 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+    toast.dismiss();
 
     if (isLoginMode && !isRestoringPassword) {
       try {
@@ -83,7 +92,6 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        console.log(responseData);
         localStorage.setItem(
           "favouritePlaces",
           JSON.stringify(responseData.favouritePlaces) || []
@@ -103,7 +111,6 @@ const Auth = () => {
         formData.append("username", formState.inputs.username.value);
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
-        console.log(formState.inputs.image.value);
         await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
           "POST",
@@ -197,6 +204,11 @@ const Auth = () => {
             </div>
           )}
 
+          {!isRestoringPassword && (
+            <Button type="submit" disabled={!formState.isValid}>
+              {isLoginMode ? "LOGIN" : "SIGNUP"}
+            </Button>
+          )}
           {isLoginMode && !isRestoringPassword && (
             <div>
               <button
@@ -206,11 +218,6 @@ const Auth = () => {
               </button>
               <hr />
             </div>
-          )}
-          {!isRestoringPassword && (
-            <Button type="submit" disabled={!formState.isValid}>
-              {isLoginMode ? "LOGIN" : "SIGNUP"}
-            </Button>
           )}
         </form>
         {!isRestoringPassword && (

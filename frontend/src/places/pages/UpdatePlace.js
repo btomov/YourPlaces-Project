@@ -74,7 +74,7 @@ const UpdatePlace = (props) => {
 
   const placeUpdateSubmitHandler = async (event) => {
     // event.preventDefault();
-    console.log(formState.inputs.image.value);
+    // console.log(formState.inputs.image.value);
     try {
       const formData = new FormData();
       formData.append("title", formState.inputs.title.value);

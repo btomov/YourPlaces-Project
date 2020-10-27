@@ -21,7 +21,6 @@ const Favourites = (props) => {
             "Content-Type": "application/json",
           }
         );
-        console.log(responseData);
         setLoadedPlaces(responseData.favouritePlaces);
       } catch (err) {}
     };

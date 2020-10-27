@@ -46,7 +46,6 @@ const Settings = (props) => {
           process.env.REACT_APP_BACKEND_URL + "/users/" + userId
         );
         setUserData(responseData.user);
-        console.log("ping");
       } catch (err) {}
     };
     fetchUser();
@@ -56,7 +55,6 @@ const Settings = (props) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("pong");
         setFormData(
           {
             username: {
@@ -99,7 +97,6 @@ const Settings = (props) => {
             "You have to log back in for your username change to take effect."
           );
         }
-        console.log(responseData);
       } catch (err) {
         console.log(err);
       }
