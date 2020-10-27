@@ -122,7 +122,10 @@ const PlaceItem = (props) => {
       {!isLoading && props.place && (
         <div id="custom" className="ui card">
           <div className="image">
-            <img src={`${props.place.image}`} alt={props.place.title} />
+            <img
+              src={`${process.env.REACT_APP_ASSET_URL}/${props.place.image}`}
+              alt={props.place.title}
+            />
           </div>
           <div className="content">
             {/* Potentially change back to a-tag since we want a link */}

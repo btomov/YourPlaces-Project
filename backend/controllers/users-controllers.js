@@ -8,7 +8,6 @@ const Place = require("../models/place");
 const PwChangeRequest = require("../models/reset-password");
 const nodemailer = require("nodemailer");
 const sgTransport = require("nodemailer-sendgrid-transport");
-const AWS = require("aws-sdk");
 
 const mongoose = require("mongoose");
 
@@ -19,12 +18,6 @@ const options = {
   },
 };
 const client = nodemailer.createTransport(sgTransport(options));
-
-const awsCredentials = new AWS.S3({
-  accessKeyId: `${process.env.AWS_ACCESS_KEY_ID}`,
-  secretAccessKey: `${process.env.AWS_SECRET_ACCESS_KEY}`,
-  Bucket: "your-places",
-});
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -71,8 +64,7 @@ const signup = async (req, res, next) => {
       new HttpError(
         "Invalid inputs passed, please check your data.",
         // errors.errors[0].param + " " + errors.errors[0].msg,
-        422,
-        errors
+        422
       )
     );
   }
@@ -128,7 +120,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     username,
     email,
-    image: req.file.location,
+    image: req.file.path,
     password: hashedPassword,
     places: [],
     temporarytoken,
@@ -314,10 +306,7 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 
-  let imagePath = user.image;
-  let newPath = imagePath.substring(37, imagePath.length);
-  console.log(imagePath);
-  console.log(newPath);
+  const imagePath = user.image;
 
   try {
     const sess = await mongoose.startSession();
@@ -326,38 +315,17 @@ const deleteUser = async (req, res, next) => {
     await Place.deleteMany({ creator: user._id });
     await sess.commitTransaction();
   } catch (err) {
+    console.log(err);
     const error = new HttpError(
       "Something went wrong, could not delete user.",
-      500,
-      err
+      500
     );
     return next(error);
   }
 
-  // var s3 = AWS.S3(awsCredentials);
-  //Doesn't work properly, i think cuz of newPath having % signs
-  try {
-    awsCredentials.deleteObject(
-      {
-        Bucket: "your-places",
-        Key: newPath,
-      },
-      function (err, data) {
-        console.log(err);
-        console.log(data);
-      }
-    );
-  } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not delete user.",
-      500,
-      err
-    );
-  }
-
-  // fs.unlink(imagePath, (err) => {
-  //   console.log(err);
-  // });
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted user." });
 };
@@ -674,7 +642,7 @@ const updateUser = async (req, res, next) => {
     fs.unlink(user.image, (err) => {
       console.log(err);
     });
-    user.image = req.file.location;
+    user.image = req.file.path;
   }
 
   try {
