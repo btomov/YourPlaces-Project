@@ -99,17 +99,18 @@ const PlaceItem = (props) => {
         show={isEditing}
         onCancel={stopEditHandler}
         header={`Editing ${props.place.title}`}
-        footerClass="place-item__modal-actions"
-        footer={
-          <React.Fragment>
-            <Button inverse onClick={cancelDeleteHandler}>
-              CANCEL
-            </Button>
-            <Button danger onClick={confirmDeleteHandler}>
-              DELETE
-            </Button>
-          </React.Fragment>
-        }>
+        // footerClass="place-item__modal-actions"
+        // footer={
+        //   <React.Fragment>
+        //     <Button inverse onClick={cancelDeleteHandler}>
+        //       CANCEL
+        //     </Button>
+        //     <Button danger onClick={confirmDeleteHandler}>
+        //       DELETE
+        //     </Button>
+        //   </React.Fragment>
+        // }
+      >
         <UpdatePlace place={props.place} />
       </Modal>
       {/* Full view modal */}

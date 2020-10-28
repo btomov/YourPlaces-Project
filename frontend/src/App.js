@@ -16,6 +16,7 @@ import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
 import { ToastContainer } from "react-toastify";
+import BackgroundSlider from "./shared/components/UIElements/BackgroundSlider";
 
 const Users = React.lazy(() => import("./user/pages/Users"));
 const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
@@ -63,6 +64,7 @@ const App = () => {
       <Switch>
         <Route path="/" exact>
           <Users />
+          {/* <BackgroundSlider /> */}
         </Route>
         <Route path="/:username/places" exact>
           <UserPlaces />

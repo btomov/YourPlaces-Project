@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "../../shared/components/UIElements/Card";
 
-const PlaceItem = (props) => {
+const PlaceItemFullView = (props) => {
   return (
     <React.Fragment>
       <div className="place-item">
@@ -23,4 +23,4 @@ const PlaceItem = (props) => {
   );
 };
 
-export default PlaceItem;
+export default PlaceItemFullView;
