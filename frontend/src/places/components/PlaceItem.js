@@ -67,16 +67,21 @@ const PlaceItem = (props) => {
       right: 0,
       bottom: 0,
       backgroundColor: "rgba(0, 0, 0, 0.75) ",
+      display: "flex",
+      justifyContent: "center",
     },
 
     content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      minWidth: "50rem",
+      // top: "50%",
+      // left: "50%",
+      // right: "auto",
+      // bottom: "auto",
+      // marginRight: "-50%",
+      // transform: "translate(-50%, -50%)",
+      // minWidth: "50rem",
+      margin: "3rem auto",
+      maxWidth: "50rem",
+      maxHeight: "55rem",
     },
   };
 
