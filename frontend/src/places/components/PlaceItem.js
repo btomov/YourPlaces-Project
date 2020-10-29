@@ -9,6 +9,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import Icon from "../../shared/components/UIElements/Icon";
 import PlaceItemFullView from "./PlaceItemFullView";
+import ModalNew from "react-modal";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -58,6 +59,27 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
+  const customStyles = {
+    overlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.75) ",
+    },
+
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      minWidth: "50rem",
+    },
+  };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -95,30 +117,20 @@ const PlaceItem = (props) => {
         </p>
       </Modal>
       {/* Edit Modal */}
-      <Modal
-        show={isEditing}
-        onCancel={stopEditHandler}
-        header={`Editing ${props.place.title}`}
-        footerClass="place-item__modal-actions"
-        footer={
-          <React.Fragment>
-            <Button inverse onClick={cancelDeleteHandler}>
-              CANCEL
-            </Button>
-            <Button danger onClick={confirmDeleteHandler}>
-              DELETE
-            </Button>
-          </React.Fragment>
-        }>
+      <ModalNew
+        isOpen={isEditing}
+        onRequestClose={stopEditHandler}
+        style={customStyles}
+        contentLabel="Example Modal">
         <UpdatePlace place={props.place} />
-      </Modal>
+      </ModalNew>
       {/* Full view modal */}
-      <Modal
-        show={viewFullPlace}
-        onCancel={() => setViewFullPlace(false)}
-        header={`Viewing ${props.place.title}`}>
+      <ModalNew
+        isOpen={viewFullPlace}
+        onRequestClose={() => setViewFullPlace(false)}
+        style={customStyles}>
         <PlaceItemFullView place={props.place} />
-      </Modal>
+      </ModalNew>
       {!isLoading && props.place && (
         <div id="custom" className="ui card">
           <div className="image">

@@ -85,7 +85,7 @@ const Settings = (props) => {
         formData.append("email", formState.inputs.email.value);
         formData.append("username", formState.inputs.username.value);
         formData.append("image", formState.inputs.image.value);
-        const responseData = await sendRequest(
+        await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/users/update-user-settings/${userData._id}`,
           "PATCH",
           formData

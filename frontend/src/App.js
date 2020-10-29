@@ -83,7 +83,6 @@ const App = () => {
 
   return (
     <React.Fragment>
-      {" "}
       <ToastContainer
         position="top-center"
         autoClose={10000}
@@ -95,6 +94,10 @@ const App = () => {
         draggable
         pauseOnHover
       />
+      <span style={{ visibility: "hidden" }}>
+        Horrible hackfix, without this my viewheight gets all messed up. Not
+        good enough yet to figure out why..
+      </span>
       <AuthContext.Provider
         value={{
           isLoggedIn: !!token,

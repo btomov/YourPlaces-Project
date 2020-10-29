@@ -61,7 +61,7 @@ const UpdatePlace = (props) => {
               isValid: true,
             },
             image: {
-              value: props.image,
+              value: props.place.image,
               isValid: true,
             },
           },
@@ -70,7 +70,7 @@ const UpdatePlace = (props) => {
       } catch (err) {}
     };
     fetchPlace();
-  }, [sendRequest, setFormData, props.place, props.image]);
+  }, [sendRequest, setFormData, props.place, props.place.image]);
 
   const placeUpdateSubmitHandler = async (event) => {
     // event.preventDefault();
@@ -83,7 +83,7 @@ const UpdatePlace = (props) => {
       formData.append("image", formState.inputs.image.value);
 
       await sendRequest(
-        `${process.env.REACT_APP_BACKEND_URL}/places/${props.placeId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${props.place.id}`,
         "PATCH",
         formData,
         {

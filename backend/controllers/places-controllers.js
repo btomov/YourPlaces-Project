@@ -54,7 +54,7 @@ const getPlacesByUsername = async (req, res, next) => {
       new HttpError("Could not find places for the provided user id.", 404)
     );
   }
-  console.log(userWithPlaces);
+  // console.log(userWithPlaces);
   if (!findFavourites) {
     res.json({
       places: userWithPlaces.places.map((place) =>

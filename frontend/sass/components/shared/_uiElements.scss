@@ -144,7 +144,20 @@
 }
 
 /////////////////////////////////////////////////
-// Avatar
+// modal from npm
+.ReactModal__Overlay {
+  opacity: 0;
+  // transition: opacity 2000ms ease-in-out;
+  transition: all 200ms;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
 
 /////////////////////////////////////////////////
 // Avatar
