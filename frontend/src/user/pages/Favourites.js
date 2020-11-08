@@ -22,6 +22,12 @@ const Favourites = (props) => {
           }
         );
         setLoadedPlaces(responseData.favouritePlaces);
+        //Also change localstorage here as a safeguard.
+        localStorage.removeItem("favouritePlaces");
+        localStorage.setItem(
+          "favouritePlaces",
+          JSON.stringify(responseData.favouritePlaces) || []
+        );
       } catch (err) {}
     };
     fetchPlaces();

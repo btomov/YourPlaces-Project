@@ -8,7 +8,7 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
-  const { error, sendRequest, clearError } = useHttpClient();
+  const { error, sendRequest, clearError, isLoading } = useHttpClient();
   const [favPlaces, setFavPlaces] = useState();
 
   useEffect(() => {
@@ -17,6 +17,8 @@ const PlaceList = (props) => {
 
   const toggleFavouritePlaceHandler = async (place) => {
     let placeId = place.id;
+    //Prevent spam clicking the button ruining everything
+    if (isLoading) return;
     try {
       const responseData = await sendRequest(
         process.env.REACT_APP_BACKEND_URL + `/places/favourite/${placeId}`,
@@ -30,6 +32,7 @@ const PlaceList = (props) => {
           Authorization: "Bearer " + auth.token,
         }
       );
+      // console.log("PINGPING", isLoading);
       //If it successfully added the thing
       if (responseData.addedToFavourites) {
         // setIsInFavourites(true);
@@ -43,6 +46,7 @@ const PlaceList = (props) => {
           JSON.parse(localStorage.getItem("favouritePlaces")) || [];
         oldFavPlaces.splice(oldFavPlaces.indexOf(placeId.toString()), 1);
         localStorage.setItem("favouritePlaces", JSON.stringify(oldFavPlaces));
+        //Think this needs to be both in here and in the other if, because we can't do this before we get responseData
       }
       setFavPlaces(JSON.parse(localStorage.getItem("favouritePlaces")) || []);
     } catch (err) {}
@@ -85,6 +89,7 @@ const PlaceList = (props) => {
               onEditStart={props.onEditStart}
               onEditEnd={props.onEditEnd}
               place={place}
+              disableFavourite={isLoading}
               // id={place.id}
               // creatorId={place.creator}
               // image={place.image}
