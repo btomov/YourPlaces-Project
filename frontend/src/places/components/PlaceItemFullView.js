@@ -6,8 +6,9 @@ const PlaceItem = (props) => {
     <React.Fragment>
       <div className="place-item">
         <Card className="place-item__content">
-          <div className="place-item__image">
+          <div>
             <img
+              className="place-item__image"
               src={`${process.env.REACT_APP_ASSET_URL}/${props.place.image}`}
               alt={props.place.title}
             />
