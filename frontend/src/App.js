@@ -26,6 +26,7 @@ const ConfirmEmail = React.lazy(() => import("./user/pages/ConfirmEmail"));
 const ResetPassword = React.lazy(() => import("./user/pages/ResetPassword"));
 const Settings = React.lazy(() => import("./user/pages/Settings"));
 const Favourites = React.lazy(() => import("./user/pages/Favourites"));
+const Home = React.lazy(() => import("./shared/pages/Home"));
 
 const App = () => {
   const { username, token, login, logout, userId, isAdmin } = useAuth();
@@ -61,6 +62,9 @@ const App = () => {
   } else {
     routes = (
       <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
         <Route path="/" exact>
           <Users />
         </Route>

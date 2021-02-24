@@ -15,7 +15,7 @@ body {
 
 body {
   margin: 0;
-  background-image: url("https://images.unsplash.com/photo-1602054618838-5e8ceb470ab5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1789&q=80");
+  background-color: #f9fafb;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover; }
@@ -42,6 +42,135 @@ body {
   display: flex;
   justify-content: center;
   align-items: center; }
+
+.container {
+  background-color: #fffffff1;
+  display: flex;
+  width: 80%;
+  min-height: 500px;
+  margin: auto; }
+
+.slider-picture {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover; }
+
+.cutOffUpwards {
+  width: 120%;
+  height: 8rem;
+  transform: scaleY(-1);
+  margin-top: -5rem;
+  margin-left: -5rem; }
+
+.letsGoDiv {
+  width: 100%;
+  height: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+
+.cardsDiv {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 3rem; }
+
+.semanticCard {
+  margin-left: 20px; }
+
+.cardsButtonDiv {
+  display: flex;
+  flex-direction: column; }
+  .cardsButtonDiv Button {
+    width: 8rem;
+    align-self: center;
+    margin-top: 5rem;
+    margin-bottom: 3rem; }
+
+.splitColoredDiv {
+  height: 750px;
+  width: 100%; }
+  .splitColoredDiv-right {
+    height: inherit;
+    float: right;
+    width: 50%;
+    background-color: #c9aa90;
+    display: flex;
+    justify-items: center;
+    align-items: center; }
+    .splitColoredDiv-right .text {
+      margin-left: 50px; }
+    .splitColoredDiv-right p {
+      font-size: 2rem;
+      color: white;
+      font-weight: 400; }
+    .splitColoredDiv-right p:first-of-type {
+      font-size: 3rem;
+      font-weight: 800; }
+  .splitColoredDiv-left {
+    background-repeat: no-repeat;
+    height: inherit;
+    width: 50%;
+    float: left; }
+    .splitColoredDiv-left img {
+      object-fit: cover;
+      min-width: 100%;
+      height: 100%; }
+
+.splitColoredDiv2-right {
+  float: right;
+  width: 50%;
+  height: inherit; }
+  .splitColoredDiv2-right img {
+    object-fit: cover;
+    min-width: 100%;
+    height: 100%; }
+
+.splitColoredDiv2-left {
+  height: inherit;
+  float: right;
+  width: 50%;
+  background-color: #edb47c;
+  display: flex;
+  justify-items: center;
+  align-items: center; }
+  .splitColoredDiv2-left .text {
+    margin-left: 50px; }
+  .splitColoredDiv2-left p {
+    font-size: 2rem;
+    color: white;
+    font-weight: 400; }
+  .splitColoredDiv2-left p:first-of-type {
+    font-size: 3rem;
+    font-weight: 800; }
+
+.section-4 {
+  background-color: #edb47c;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  color: white; }
+  .section-4 img {
+    height: 150px;
+    z-index: 999; }
+  .section-4__text {
+    margin-top: 7rem;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    width: 30%; }
+    .section-4__text h1 {
+      font-size: 3rem; }
+    .section-4__text p {
+      font-size: 1.5rem; }
+  .section-4__email {
+    outline: none;
+    padding: 12px;
+    border-radius: 8%; }
+    .section-4__email:focus {
+      outline: none; }
 
 .place-item {
   margin: 1rem 0; }
@@ -270,18 +399,14 @@ body {
     border-color: red;
     background: #ffd1d1; }
 
-main {
-  margin-top: 5rem; }
-
 .main-header {
   width: 100%;
-  height: 4rem;
+  height: 10rem;
   display: flex;
   align-items: center;
   position: fixed;
   top: 0;
   left: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.26);
   padding: 0 1rem;
   z-index: 5; }
 
@@ -297,8 +422,14 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  margin-right: 2rem;
   cursor: pointer; }
+
+.main-navigation__background {
+  position: absolute;
+  width: 130%;
+  height: inherit;
+  z-index: -1;
+  margin-left: -20rem; }
 
 .main-navigation__menu-btn span {
   display: block;
@@ -307,7 +438,7 @@ main {
   background: black; }
 
 .main-navigation__logo {
-  height: 13rem; }
+  height: 5rem; }
 
 .main-navigation__header-nav {
   display: none; }
@@ -527,7 +658,7 @@ main {
   color: #069;
   cursor: pointer; }
 
-.container {
+.settings-container {
   background-color: #fffffff1;
   display: flex;
   width: 70%;

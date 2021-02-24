@@ -133,7 +133,7 @@ const Settings = (props) => {
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
 
-      <div className="container">
+      <div className="settings-container">
         <div className="sidebar">
           <ul className="side-nav">
             <li

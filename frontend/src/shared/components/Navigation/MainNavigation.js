@@ -6,6 +6,7 @@ import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
 import Backdrop from "../UIElements/Backdrop";
 import logo from "../../../img/YourPlacesLogo.png";
+import navPic from "../../../img/navbar-background.png";
 
 const MainNavigation = (props) => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
@@ -28,6 +29,11 @@ const MainNavigation = (props) => {
       </SideDrawer>
 
       <MainHeader>
+        <img
+          src={navPic}
+          alt="nav background/"
+          className="main-navigation__background"
+        />
         <button
           className="main-navigation__menu-btn"
           onClick={openDrawerHandler}>
